@@ -3,34 +3,39 @@ name: Deploy Vite + Vue App to GitHub Pages
 on:
   push:
     branches:
-      - main # Trigger the workflow on pushes to the main branch
+      - main
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: write # Ensure the token has write access
+
     steps:
-      # Checkout the repository
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Set up Node.js
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 23.5.0 # Use the Node.js version your project requires
+          node-version: 23.5.0
 
-      # Install dependencies
       - name: Install dependencies
         run: npm install
 
-      # Build the project
       - name: Build project
         run: npm run build
 
-      # Deploy to GitHub Pages
+      - name: Debug Git configuration
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git remote -v
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist # The folder containing the built files
+          token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          force_orphan: true # Force push to gh-pages branch
