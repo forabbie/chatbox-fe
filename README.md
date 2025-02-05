@@ -119,10 +119,57 @@ src/
 │   ├── helpers.js        # Helper functions (e.g., date formatting)
 │   └── constants.js      # Constants (e.g., route names, API endpoints)
 │
-├── styles/               # Global styles and SCSS files
-│   ├── main.scss         # Global styles
-│   └── variables.scss    # SCSS variables
+├── styles/
+│   ├── components/         # Component-specific styles
+│   │   ├── _buttons.scss   # Reusable button styles
+│   │   ├── _inputs.scss    # Reusable input styles
+│   │   ├── _navbar.scss    # Navbar styles
+│   ├── utilities/          # Custom utility classes
+│   │   ├── _spacing.scss   # Custom spacing utilities
+│   │   ├── _typography.scss # Custom typography utilities
+│   └── main.scss           # Main SCSS file to import all styles
 │
+├── tailwind.css          # Tailwind CSS file
 ├── App.vue               # Root component
 └── main.js               # Entry point
 ```
+
+### Installed Packages
+
+This project uses various dependencies and development tools for an optimized development experience.
+
+#### Dependencies
+
+These are required packages for the project to function:
+
+- **[@primevue/themes](https://www.npmjs.com/package/@primevue/themes)** – Provides themes for PrimeVue components.
+- **[axios](https://www.npmjs.com/package/axios)** – HTTP client for making API requests.
+- **[crypto-js](https://www.npmjs.com/package/crypto-js)** – Library for cryptographic operations like hashing and encryption.
+- **[pinia](https://pinia.vuejs.org/)** – State management for Vue 3.
+- **[primevue](https://www.primefaces.org/primevue/)** – UI component library for Vue.
+- **[vue](https://vuejs.org/)** – JavaScript framework for building user interfaces.
+- **[vue-router](https://router.vuejs.org/)** – Official router for Vue.js.
+
+#### Dev Dependencies
+
+These are tools used for development, linting, and styling:
+
+- **[@vitejs/plugin-vue](https://www.npmjs.com/package/@vitejs/plugin-vue)** – Plugin for Vue support in Vite.
+- **[@vue/eslint-config-prettier](https://www.npmjs.com/package/@vue/eslint-config-prettier)** – ESLint configuration that disables formatting rules conflicting with Prettier.
+- **[autoprefixer](https://www.npmjs.com/package/autoprefixer)** – Automatically adds vendor prefixes to CSS.
+- **[eslint](https://eslint.org/)** – JavaScript linter to enforce coding standards.
+- **[eslint-config-prettier](https://www.npmjs.com/package/eslint-config-prettier)** – Disables conflicting rules between ESLint and Prettier.
+- **[eslint-define-config](https://www.npmjs.com/package/eslint-define-config)** – Type-safe configuration helper for ESLint.
+- **[eslint-plugin-vue](https://eslint.vuejs.org/)** – ESLint rules for Vue.js.
+- **[postcss](https://postcss.org/)** – CSS transformation tool.
+- **[prettier](https://prettier.io/)** – Code formatter for consistent styling.
+- **[prettier-plugin-tailwindcss](https://www.npmjs.com/package/prettier-plugin-tailwindcss)** – Sorts Tailwind CSS classes in a structured order.
+- **[sass](https://sass-lang.com/)** – CSS preprocessor for writing modular styles.
+- **[sass-embedded](https://www.npmjs.com/package/sass-embedded)** – Alternative Sass compiler for better performance.
+- **[tailwindcss](https://tailwindcss.com/)** – Utility-first CSS framework.
+- **[vite](https://vitejs.dev/)** – Next-generation frontend tooling for fast development.
+- **[vue-eslint-parser](https://www.npmjs.com/package/vue-eslint-parser)** – Parser for ESLint to analyze Vue files.
+
+---
+
+This setup ensures the project is optimized for **fast development, clean code, and modern UI components**. 🚀
