@@ -3,12 +3,14 @@ import vue from '@vitejs/plugin-vue'
 import path from 'path'
 
 // https://vite.dev/config/
-export default defineConfig({
-  plugins: [vue()],
-  base: '/',
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, 'src')
+export default defineConfig(({ mode }) => {
+  return {
+    plugins: [vue()],
+    base: mode === 'production' ? '/chatbox-fe' : '/',
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, 'src')
+      }
     }
   }
 })
