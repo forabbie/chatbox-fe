@@ -1,8 +1,8 @@
 <template>
-  <div class="card w-full text-xs sm:w-[30rem]">
+  <div class="bg-animate mx-auto w-full rounded-lg p-6 text-xs shadow sm:w-[30rem]">
     <div class="mb-8 flex flex-col items-center justify-center text-center">
       <img src="/images/logo.svg" alt="slack-logo" class="mb-2 size-8" />
-      <div class="mb-3 text-3xl text-slate-900 dark:text-slate-50">Welcome Back</div>
+      <div class="mb-3 text-3xl text-slate-900 dark:text-slate-50">Slackbox</div>
       <span class="text-base leading-normal text-slate-600 dark:text-slate-200"
         >Don't have an account?<a class="text-link ml-2">Create today!</a></span
       >
