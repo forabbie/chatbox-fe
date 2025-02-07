@@ -1,0 +1,17 @@
+@layer components {
+  .navbar {
+    @apply bg-slack-primary flex items-center justify-between p-4 text-white;
+
+    &__logo {
+      @apply text-xl font-bold;
+    }
+
+    &__menu {
+      @apply flex space-x-4;
+
+      a {
+        @apply hover:text-slack-secondary;
+      }
+    }
+  }
+}

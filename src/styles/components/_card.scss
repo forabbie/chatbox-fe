@@ -1,0 +1,6 @@
+// src/styles/components/_card.scss
+@layer components {
+  .card {
+    @apply mx-auto rounded-lg bg-slate-200 p-6 shadow dark:bg-slate-900;
+  }
+}

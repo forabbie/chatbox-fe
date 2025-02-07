@@ -1,0 +1,17 @@
+@layer components {
+  .message {
+    @apply mb-3 rounded bg-white p-3 shadow;
+
+    &__user {
+      @apply font-bold text-blue-500;
+    }
+
+    &__text {
+      @apply text-gray-700;
+    }
+
+    &__timestamp {
+      @apply text-sm text-gray-500;
+    }
+  }
+}
