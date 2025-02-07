@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import authRoutes from './routes/auth'
-// import workspaceRoutes from "./routes/workspace";
+import workspaceRoutes from './routes/workspace'
 // import settingsRoutes from "./routes/settings";
 // import { useAuthStore } from '@/stores/auth.store'
 
@@ -13,7 +13,7 @@ const router = createRouter({
   routes: [
     { path: '/', redirect: { name: 'Auth' } },
     ...authRoutes,
-    // ...workspaceRoutes,
+    ...workspaceRoutes,
     // ...settingsRoutes,
     // {
     //   path: "/:pathMatch(.*)*",
