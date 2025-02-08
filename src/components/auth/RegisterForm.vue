@@ -1,12 +1,18 @@
 <template>
   <div class="mb-8 flex flex-col items-center justify-center text-center">
     <img src="/images/logo.svg" alt="slack-logo" class="mb-2 size-8" />
-    <div class="mb-3 text-3xl text-slate-900 dark:text-slate-50">Sign in to Slackbox</div>
+    <div class="mb-3 text-3xl text-slate-900 dark:text-slate-50">Sign up to Slackbox</div>
     <span class="text-base leading-normal text-slate-600 dark:text-slate-200"
-      >Don't have an account?<a href="/auth/signup" class="text-link ml-2">Create today!</a></span
+      >Already have an account?<a href="/auth/login" class="text-link ml-2">Sign in</a></span
     >
   </div>
   <vee-form :validation-schema="schema" @submit="validateForm">
+    <BaseInput name="name" label="Name" v-model="form.name">
+      <template #before>
+        <InputIcon class="pi pi-user" />
+      </template>
+    </BaseInput>
+
     <BaseInput name="email address" label="Email Address" v-model="form.email">
       <template #before>
         <InputIcon class="pi pi-envelope" />
@@ -19,10 +25,16 @@
       </template>
     </BaseInput>
 
-    <div class="mb-10 flex items-center justify-between">
-      <BaseCheckbox name="rememberme" label="Remember Me" v-model="form.rememberme" binary />
-      <a class="text-link ml-2">Forgot password?</a>
-    </div>
+    <BaseInput
+      name="confirm password"
+      label="Confirm Password"
+      type="password"
+      v-model="form.confirmPassword"
+    >
+      <template #before>
+        <InputIcon class="pi pi-lock" />
+      </template>
+    </BaseInput>
 
     <BaseButton
       class="w-full"
@@ -41,13 +53,13 @@ import { ref } from 'vue'
 import InputIcon from 'primevue/inputicon'
 
 import BaseInput from '@/components/common/BaseInput.vue'
-import BaseCheckbox from '@/components/common/BaseCheckbox.vue'
 import BaseButton from '@/components/common/BaseButton.vue'
 
 const form = ref({
   email: '',
   password: '',
-  rememberme: true
+  name: '',
+  confirmPassword: ''
 })
 
 const schema = {

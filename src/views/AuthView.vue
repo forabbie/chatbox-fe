@@ -1,24 +1,8 @@
 <template>
-  <div class="auth-view">
-    <!-- <h2>{{ isLogin ? "Login" : "Register" }}</h2>
-    <form @submit.prevent="handleSubmit">
-      <div v-if="!isLogin">
-        <input v-model="form.name" placeholder="Name" required />
-      </div>
-      <input v-model="form.email" type="email" placeholder="Email" required />
-      <input
-        v-model="form.password"
-        type="password"
-        placeholder="Password"
-        required
-      />
-      <button type="submit">{{ isLogin ? "Login" : "Register" }}</button>
-    </form>
-    <p>
-      {{ isLogin ? "Don't have an account?" : "Already have an account?" }}
-      <a @click="toggleMode">{{ isLogin ? "Register" : "Login" }}</a>
-    </p> -->
-    <login-form></login-form>
+  <div class="flex h-full items-center justify-center bg-primary-950 px-6 py-20 md:px-12 lg:px-20">
+    <div class="bg-animate mx-auto w-full rounded-lg p-6 text-xs shadow sm:w-[30rem]">
+      <router-view :key="$route.path"></router-view>
+    </div>
   </div>
 </template>
 
@@ -26,7 +10,7 @@
 // import { ref } from 'vue'
 // import { useRouter } from 'vue-router'
 // import { useAuthStore } from '@/stores/auth.store'
-import LoginForm from '@/components/auth/LoginForm.vue'
+// import LoginForm from '@/components/auth/LoginForm.vue'
 
 // const router = useRouter()
 // const authStore = useAuthStore()
@@ -62,9 +46,3 @@ import LoginForm from '@/components/auth/LoginForm.vue'
 //   }
 // }
 </script>
-
-<style scoped>
-.auth-view {
-  @apply flex h-full items-center justify-center bg-primary-900 px-6 py-20 md:px-12 lg:px-20;
-}
-</style>
