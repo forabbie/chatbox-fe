@@ -1,19 +1,37 @@
 <template>
   <div class="mb-8 flex flex-col items-center justify-center text-center">
     <img src="/images/logo.svg" alt="slack-logo" class="mb-2 size-8" />
-    <div class="mb-3 text-3xl text-slate-900 dark:text-slate-50">Sign in to Slackbox</div>
-    <span class="text-base leading-normal text-slate-600 dark:text-slate-200"
-      >Don't have an account?<a href="/auth/signup" class="text-link ml-2">Create today!</a></span
-    >
+    <div class="mb-3 text-3xl text-slate-900">Sign in to Slackbox</div>
+    <span class="text-base leading-normal text-slate-600"
+      >Don't have an account?
+      <router-link to="/auth/signup" class="text-link ml-2">Create today!</router-link>
+    </span>
   </div>
-  <vee-form :validation-schema="schema" @submit="validateForm">
-    <BaseInput name="email address" label="Email Address" v-model="form.email">
+  <vee-form
+    ref="loginform"
+    :validation-schema="schema"
+    :validate-on-input="false"
+    @submit.prevent="validateForm"
+  >
+    <BaseInput
+      name="email address"
+      label="Email Address"
+      type="email"
+      v-model="form.email"
+      :submitted="submitted"
+    >
       <template #before>
         <InputIcon class="pi pi-envelope" />
       </template>
     </BaseInput>
 
-    <BaseInput name="password" label="Password" type="password" v-model="form.password">
+    <BaseInput
+      name="password"
+      label="Password"
+      type="password"
+      v-model="form.password"
+      :submitted="submitted"
+    >
       <template #before>
         <InputIcon class="pi pi-lock" />
       </template>
@@ -31,6 +49,7 @@
       :disabled="false"
       :inactive="false"
       :loading="false"
+      @click.prevent="validateForm"
       >Sign In</BaseButton
     >
   </vee-form>
@@ -44,6 +63,7 @@ import BaseInput from '@/components/common/BaseInput.vue'
 import BaseCheckbox from '@/components/common/BaseCheckbox.vue'
 import BaseButton from '@/components/common/BaseButton.vue'
 
+const submitted = ref(false)
 const form = ref({
   email: '',
   password: '',
@@ -52,10 +72,20 @@ const form = ref({
 
 const schema = {
   'email address': 'email|required',
-  password: 'required'
+  password: 'required|min:9|excluded:password'
 }
 
-const validateForm = (values) => {
-  console.log('log me: ', values)
+const loginform = ref(null)
+const validateForm = async (values) => {
+  submitted.value = true
+  const { valid } = await loginform.value.validate()
+  // console.log('Validation result:', { valid, errors }) // Debugging
+
+  if (!valid) {
+    return
+  }
+
+  // Proceed with form submission
+  console.log('Form submitted with values:', values)
 }
 </script>

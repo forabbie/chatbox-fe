@@ -1,26 +1,34 @@
 <template>
   <div class="input-container">
     <label v-if="label" :for="name">{{ label }}</label>
-    <IconField>
-      <slot name="before"></slot>
-      <InputText
-        :id="name"
-        :type="computedType"
-        :modelValue="modelValue"
-        :placeholder="placeholder"
-        :disabled="disabled"
-        :class="inputClasses"
-        @update:modelValue="handleInput"
-      />
-      <slot name="after">
-        <InputIcon
-          v-if="type === 'password'"
-          :class="['pi', isPasswordVisible ? 'pi-eye-slash' : 'pi-eye', 'cursor-pointer']"
-          @click="togglePasswordVisibility"
+    <vee-field :name="name" v-slot="{ field, errors }" :bails="false">
+      <IconField>
+        <slot name="before"></slot>
+        <InputText
+          :id="name"
+          :type="computedType"
+          :modelValue="modelValue"
+          :placeholder="placeholder"
+          :disabled="disabled"
+          :class="inputClasses"
+          @update:modelValue="handleInput"
+          v-bind="field"
         />
-      </slot>
-    </IconField>
-    <ErrorMessage class="p-error" :name="name" />
+        <slot name="after">
+          <InputIcon
+            v-if="type === 'password'"
+            :class="['pi', isPasswordVisible ? 'pi-eye-slash' : 'pi-eye', 'cursor-pointer']"
+            @click="togglePasswordVisibility"
+          />
+        </slot>
+      </IconField>
+      <!-- <ErrorMessage class="p-error" :name="name" /> -->
+      <div v-if="submitted && errors && errors.length" class="text-red-600">
+        <div v-for="(error, index) in errors" :key="index">
+          {{ error }}
+        </div>
+      </div>
+    </vee-field>
   </div>
 </template>
 
@@ -42,10 +50,11 @@ const props = defineProps({
     type: String,
     default: 'text'
   },
-  modelValue: String,
+  modelValue: [String, Number],
+  errors: Array,
   placeholder: String,
   disabled: Boolean,
-  disabled: Boolean
+  submitted: Boolean
 })
 
 // Use VeeValidate's `useField` to handle validation
@@ -86,7 +95,7 @@ const togglePasswordVisibility = () => {
   }
 
   .inp {
-    @apply hover:border-primary focus:border-primary focus:ring-primary mb-1 w-full focus:outline-none;
+    @apply mb-1 w-full hover:border-primary focus:border-primary focus:outline-none focus:ring-primary;
 
     &--invalid {
       @apply border-red-500;
