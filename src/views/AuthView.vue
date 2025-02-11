@@ -1,6 +1,6 @@
 <template>
   <div
-    class="relative h-full items-center justify-center overflow-hidden bg-[url('/images/bg-darkest--wide.webp')] bg-cover bg-no-repeat"
+    class="relative h-full items-center justify-center overflow-hidden bg-[url('/images/bg-darkest--wide.webp')] bg-cover bg-bottom bg-no-repeat"
   >
     <router-view :key="$route.path"></router-view>
     <span v-for="i in 200" :key="i" class="particle"></span>
