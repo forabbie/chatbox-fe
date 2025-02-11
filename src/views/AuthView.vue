@@ -1,5 +1,7 @@
 <template>
-  <div class="auth bg-animate h-full items-center justify-center">
+  <div
+    class="relative h-full items-center justify-center overflow-hidden bg-[url('/images/bg-darkest--wide.webp')] bg-cover bg-no-repeat"
+  >
     <router-view :key="$route.path"></router-view>
     <span v-for="i in 200" :key="i" class="particle"></span>
   </div>
@@ -8,12 +10,6 @@
 <style scoped lang="scss">
 @use 'sass:math';
 @use 'sass:list';
-
-.auth {
-  position: relative;
-  overflow-x: hidden;
-  overflow: hidden;
-}
 
 .particle {
   position: absolute;

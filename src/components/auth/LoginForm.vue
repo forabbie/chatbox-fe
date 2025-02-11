@@ -1,6 +1,6 @@
 <template>
   <div class="flex h-full items-center">
-    <div class="card z-10 sm:w-[30rem]">
+    <div class="card z-10 mx-6 sm:m-auto sm:w-[30rem]">
       <div class="mb-8 flex flex-col items-center justify-center text-center">
         <img src="/images/logo.svg" alt="slack-logo" class="mb-2 size-8" />
         <div class="mb-3 text-3xl text-slate-50">Sign in to Slackbox</div>

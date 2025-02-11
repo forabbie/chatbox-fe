@@ -4,7 +4,7 @@
       <img src="/images/bg-darkest--wide.webp" alt="bg" class="h-full" />
     </div>
     <div
-      class="lg:rounded-0 z-10 mx-auto my-6 flex w-11/12 items-center rounded-2xl bg-slate-950 bg-opacity-100 p-6 lg:my-0 lg:w-full"
+      class="lg:rounded-0 z-10 mx-auto my-6 flex w-11/12 items-center rounded-2xl bg-slate-950 bg-opacity-100 px-12 py-6 lg:my-0 lg:w-full"
     >
       <div class="w-full">
         <div class="mb-8 flex flex-col items-center justify-center text-center">
