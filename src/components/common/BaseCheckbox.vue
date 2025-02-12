@@ -1,16 +1,23 @@
 <template>
-  <div class="flex items-center gap-2">
-    <Checkbox
-      :inputId="name"
-      :name="name"
-      :modelValue="value"
-      :binary="binary"
-      :size="size"
-      :pt="checkPt"
-      @change="handleChange"
-    />
-    <label :for="name">{{ label }}</label>
-  </div>
+  <vee-field :name="name" v-slot="{ field, meta, errors }" :bails="false">
+    <div class="flex items-center gap-2">
+      <Checkbox
+        :inputId="name"
+        :name="name"
+        :modelValue="value"
+        :binary="binary"
+        :size="size"
+        :pt="checkPt"
+        @update:modelValue="handleInput"
+      />
+      <label :for="name">{{ label }}</label>
+    </div>
+    <div v-if="submitted && errors.length" class="error-messages">
+      <div v-for="(error, index) in errors" :key="index" class="error-message">
+        {{ error }}
+      </div>
+    </div>
+  </vee-field>
 </template>
 
 <script setup>
@@ -40,6 +47,14 @@ const props = defineProps({
     type: String,
     default: 'small',
     validator: (value) => ['small', 'large'].includes(value)
+  },
+  disabled: {
+    type: Boolean,
+    default: false
+  },
+  submitted: {
+    type: Boolean,
+    default: false
   }
 })
 const { value, handleChange } = useField(props.name, undefined, {
@@ -47,7 +62,11 @@ const { value, handleChange } = useField(props.name, undefined, {
 })
 
 // Emit for v-model
-defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue'])
+const handleInput = (event) => {
+  handleChange(event)
+  emit('update:modelValue', event)
+}
 
 const checkPt = {
   box: ({ props, context }) => ({

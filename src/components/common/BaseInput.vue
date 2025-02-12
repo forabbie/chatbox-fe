@@ -1,18 +1,23 @@
 <template>
   <div class="input-container">
     <label v-if="label" :for="name">{{ label }}</label>
-    <vee-field :name="name" v-slot="{ field, errors }" :bails="false">
+    <vee-field :name="name" v-slot="{ field, meta, errors }" :bails="false">
       <IconField>
         <slot name="before"></slot>
         <InputText
+          v-bind="field"
           :id="name"
           :type="computedType"
           :modelValue="modelValue"
           :placeholder="placeholder"
           :disabled="disabled"
-          :class="inputClasses"
+          :pt="customPt"
+          :class="{
+            'p-inputtext': true,
+            'p-inputtext--invalid': submitted && errors.length
+          }"
           @update:modelValue="handleInput"
-          v-bind="field"
+          size="small"
         />
         <slot name="after">
           <InputIcon
@@ -22,9 +27,8 @@
           />
         </slot>
       </IconField>
-      <!-- <ErrorMessage class="p-error" :name="name" /> -->
-      <div v-if="submitted && errors && errors.length" class="text-red-600">
-        <div v-for="(error, index) in errors" :key="index">
+      <div v-if="submitted && errors.length" class="error-messages">
+        <div v-for="(error, index) in errors" :key="index" class="error-message">
           {{ error }}
         </div>
       </div>
@@ -51,11 +55,16 @@ const props = defineProps({
     default: 'text'
   },
   modelValue: [String, Number],
-  errors: Array,
   placeholder: String,
   disabled: Boolean,
   submitted: Boolean
 })
+
+const customPt = {
+  class: [
+    // Custom classes for InputText
+  ]
+}
 
 // Use VeeValidate's `useField` to handle validation
 // eslint-disable-next-line no-unused-vars
@@ -69,11 +78,6 @@ const handleInput = (event) => {
   handleChange(event)
   emit('update:modelValue', event)
 }
-
-const inputClasses = computed(() => ({
-  inp: true,
-  'inp--invalid': errorMessage.value
-}))
 
 // Password Visibility Toggle
 const isPasswordVisible = ref(false)
@@ -91,19 +95,23 @@ const togglePasswordVisibility = () => {
   @apply mb-5;
 
   label {
-    @apply mb-2 block;
+    @apply mb-2 block font-medium text-gray-700;
   }
 
-  .inp {
-    @apply mb-1 w-full hover:border-primary focus:border-primary focus:outline-none focus:ring-primary;
+  .p-inputtext {
+    @apply mb-1 w-full rounded-md border transition-colors duration-200;
+
+    &:hover {
+      @apply border-primary;
+    }
+
+    &:focus {
+      @apply border-primary outline-none ring-2 ring-primary;
+    }
 
     &--invalid {
       @apply border-red-500;
     }
-  }
-
-  .p-error {
-    @apply text-red-600;
   }
 }
 </style>

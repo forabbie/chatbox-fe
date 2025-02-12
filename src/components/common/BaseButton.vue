@@ -45,7 +45,7 @@ const buttonClasses = computed(() => {
   @apply rounded px-4 py-2 text-xs font-semibold transition-colors;
 
   &--positive {
-    @apply bg-primary hover:bg-primary-dark text-white;
+    @apply bg-primary text-white hover:bg-primary-dark;
 
     &.btn--inactive,
     &.btn--disabled {

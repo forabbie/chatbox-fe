@@ -8,7 +8,15 @@
   }
 
   .text-link {
-    @apply text-primary cursor-pointer no-underline;
+    @apply cursor-pointer text-primary no-underline;
     /* underline-offset-4 hover:underline */
+  }
+
+  .error-messages {
+    @apply mt-1;
+
+    .error-message {
+      @apply text-sm text-red-600;
+    }
   }
 }

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-full items-center">
+  <div class="flex h-full items-center text-slate-300">
     <div class="card z-10 mx-6 sm:m-auto sm:w-[30rem]">
       <div class="mb-8 flex flex-col items-center justify-center text-center">
         <img src="/images/logo.svg" alt="slack-logo" class="mb-2 size-8" />
@@ -40,7 +40,13 @@
         </BaseInput>
 
         <div class="mb-10 flex items-center justify-between">
-          <BaseCheckbox name="rememberme" label="Remember Me" v-model="form.rememberme" binary />
+          <BaseCheckbox
+            name="rememberme"
+            label="Remember Me"
+            v-model="form.rememberme"
+            binary
+            :submitted="submitted"
+          />
           <a class="text-link ml-2">Forgot password?</a>
         </div>
 
@@ -79,6 +85,7 @@ const schema = {
 }
 
 const loginform = ref(null)
+const submitted = ref(false)
 const validateForm = async (values) => {
   submitted.value = true
   const { valid } = await loginform.value.validate()
@@ -88,7 +95,7 @@ const validateForm = async (values) => {
     return
   }
 
-  // Proceed with form submission
+  // // Proceed with form submission
   console.log('Form submitted with values:', values)
 }
 </script>
