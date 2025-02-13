@@ -86,8 +86,11 @@ const schema = {
 
 const loginform = ref(null)
 const submitted = ref(false)
+const in_submission = ref(false)
+
 const validateForm = async (values) => {
   submitted.value = true
+  in_submission.value = true
   const { valid } = await loginform.value.validate()
   // console.log('Validation result:', { valid, errors }) // Debugging
 
