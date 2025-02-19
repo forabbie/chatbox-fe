@@ -72,7 +72,9 @@ import InputIcon from 'primevue/inputicon'
 import BaseInput from '@/components/common/BaseInput.vue'
 import BaseCheckbox from '@/components/common/BaseCheckbox.vue'
 import BaseButton from '@/components/common/BaseButton.vue'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const form = ref({
   email: '',
   password: '',
@@ -97,7 +99,7 @@ const validateForm = async (values) => {
   if (!valid) {
     return
   }
-
+  router.push({ name: 'home' })
   // // Proceed with form submission
   console.log('Form submitted with values:', values)
 }

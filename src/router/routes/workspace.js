@@ -1,5 +1,6 @@
 const workspaceRoutes = [
   {
+    name: 'home',
     path: '/workspace',
     component: () => import('@/views/HomeView.vue'),
     meta: { layout: 'app', requiresAuth: true }
