@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="27" height="27" viewBox="0 0 27 27">
+  <g id="slide-default" transform="translate(-189.523 -1)">
+    <g id="Rectangle_1034" data-name="Rectangle 1034" transform="translate(189.523 1)" fill="#fff" stroke="#e1e7f0" stroke-width="1">
+      <rect width="27" height="27" rx="6" stroke="none"/>
+      <rect x="0.5" y="0.5" width="26" height="26" rx="5.5" fill="none"/>
+    </g>
+    <g id="arrow-right" transform="translate(212.631 23) rotate(180)">
+      <line id="Line_10" data-name="Line 10" x2="7" transform="translate(5.108 8.5)" fill="none" stroke="#7086a4" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <path id="Path_6141" data-name="Path 6141" d="M12,5l3.554,3.554L12,12.108" transform="translate(-3.446)" fill="none" stroke="#7086a4" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <line id="Line_11" data-name="Line 11" y2="9" transform="translate(13.608 4)" fill="none" stroke="#7086a4" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+    </g>
+  </g>
+</svg>
