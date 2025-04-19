@@ -9,18 +9,13 @@
           <router-link to="/auth/signup" class="text-link">Create today!</router-link>
         </span>
       </div>
-      <vee-form
-        ref="loginform"
-        :validation-schema="schema"
-        :validate-on-input="false"
-        @submit.prevent="validateForm"
-      >
+      <vee-form ref="refloginform" :validation-schema="schema" :validate-on-input="false">
         <BaseInput
           name="email address"
           label="Email Address"
           type="email"
-          v-model="form.email"
-          :submitted="submitted"
+          v-model="form.emailaddress"
+          :isSubmitted="isSubmitted"
         >
           <template #before>
             <InputIcon class="pi pi-envelope" />
@@ -32,7 +27,7 @@
           label="Password"
           type="password"
           v-model="form.password"
-          :submitted="submitted"
+          :isSubmitted="isSubmitted"
         >
           <template #before>
             <InputIcon class="pi pi-lock" />
@@ -45,7 +40,7 @@
             label="Remember Me"
             v-model="form.rememberme"
             binary
-            :submitted="submitted"
+            :isSubmitted="isSubmitted"
           />
           <a class="text-link ml-2">Forgot password?</a>
         </div>
@@ -57,7 +52,7 @@
           :disabled="false"
           :inactive="false"
           :loading="false"
-          @click.prevent="validateForm"
+          @click.prevent="handleFormSubmit"
           >Sign In</BaseButton
         >
       </vee-form>
@@ -65,42 +60,45 @@
   </div>
 </template>
 <script setup>
-import { ref } from 'vue'
-
 import InputIcon from 'primevue/inputicon'
 
 import BaseInput from '@/components/common/BaseInput.vue'
 import BaseCheckbox from '@/components/common/BaseCheckbox.vue'
 import BaseButton from '@/components/common/BaseButton.vue'
+
+import LoginFunctions from './login.js'
+
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
+const { performLogin } = LoginFunctions()
+
 const form = ref({
-  email: '',
+  emailaddress: '',
   password: '',
   rememberme: true
 })
 
 const schema = {
   'email address': 'email|required',
-  password: 'required|min:9|excluded:password'
+  password: 'required|min:6' // |excluded:password
 }
 
-const loginform = ref(null)
-const submitted = ref(false)
-const in_submission = ref(false)
+const refloginform = ref(null)
+const isSubmitted = ref(false)
+const isInSubmission = ref(false)
 
-const validateForm = async (values) => {
-  submitted.value = true
-  in_submission.value = true
-  const { valid } = await loginform.value.validate()
-  // console.log('Validation result:', { valid, errors }) // Debugging
+const handleFormSubmit = async () => {
+  isSubmitted.value = true
+  isInSubmission.value = true
 
-  if (!valid) {
-    return
-  }
+  const { valid } = await refloginform.value.validate()
+
+  if (!valid) return
+
+  await performLogin(form.value)
+
   router.push({ name: 'home' })
-  // // Proceed with form submission
-  console.log('Form submitted with values:', values)
 }
 </script>

@@ -1,10 +1,10 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { getLocalStorage, setLocalStorage } from '@/utils/storageManager'
+import { getLocalStorage, setLocalStorage } from '@/utils/storage'
 
 export const useLayoutStore = defineStore('layoutStore', () => {
   // State
-  const layout = ref(getLocalStorage('acp.is_login') || false ? 'app' : 'auth')
+  const layout = ref(getLocalStorage('acp.isAuthenticated') || false ? 'app' : 'auth')
   const isSidebarAnchored = ref(false)
   const isShowSearch = ref(false)
 

@@ -1,46 +1,6 @@
-import { encryptCookie, decryptCookie } from './hashingManager'
+import { encryptCookie, decryptCookie } from './hash'
 
 const isProduction = import.meta.env.VITE_APP_ENV === 'production'
-
-export const setLocalStorage = (key, str) => {
-  const value = JSON.stringify(str)
-  const encode = utf8ToB64(value)
-  localStorage.setItem(key, encode)
-}
-
-export const getLocalStorage = (key) => {
-  if (localStorage.getItem(key)) {
-    const decode = b64ToUtf8(localStorage.getItem(key)) || ''
-    return JSON.parse(decode)
-  }
-  return ''
-}
-
-export const deleteLocalStorage = (key) => {
-  localStorage.removeItem(key)
-}
-
-export const setSessionStorage = (key = '', str = {}, isEncrypt = true) => {
-  const value = JSON.stringify(str)
-  const code = isEncrypt ? utf8ToB64(value) : value
-  const encode = code
-  sessionStorage.setItem(key, encode)
-}
-
-export const getSessionStorage = (key = '', isEncrypt = true) => {
-  if (sessionStorage.getItem(key)) {
-    const code = isEncrypt
-      ? b64ToUtf8(sessionStorage.getItem(key) || '{}')
-      : sessionStorage.getItem(key)
-    const decode = code || ''
-    return JSON.parse(decode)
-  }
-  return ''
-}
-
-export const deleteSessionStorage = (key = '') => {
-  sessionStorage.removeItem(key)
-}
 
 // Function to set a cookie with encryption
 export const setCookie = (name, value, minutes, sameSite = 'Strict') => {
@@ -99,4 +59,20 @@ export const getCookie = (name) => {
 // Function to erase a cookie by name
 export const eraseCookie = (name) => {
   document.cookie = `${name}=; Max-Age=0; path=/; Secure; SameSite=Strict`
+}
+
+// Clears all cookies by iterating through them and setting their expiration date to the past
+export const clearAllCookies = () => {
+  try {
+    const cookies = document.cookie.split(';')
+
+    for (let cookie of cookies) {
+      const eqPos = cookie.indexOf('=')
+      const name = eqPos > -1 ? cookie.substring(0, eqPos).trim() : cookie.trim()
+
+      document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;SameSite=Strict`
+    }
+  } catch (error) {
+    console.error('Error clearing cookies:', error)
+  }
 }

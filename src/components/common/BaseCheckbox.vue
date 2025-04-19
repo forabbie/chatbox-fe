@@ -12,7 +12,7 @@
       />
       <label :for="name">{{ label }}</label>
     </div>
-    <div v-if="submitted && errors.length" class="error-messages">
+    <div v-if="isSubmitted && errors.length" class="error-messages">
       <div v-for="(error, index) in errors" :key="index" class="error-message">
         {{ error }}
       </div>
@@ -52,7 +52,7 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
-  submitted: {
+  isSubmitted: {
     type: Boolean,
     default: false
   }

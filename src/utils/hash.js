@@ -9,7 +9,7 @@ const hexEncode = (b) => CryptoJS.enc.Hex.stringify(b)
 // Encrypts the message using AES encryption
 export const encryptMessage = (value) => {
   try {
-    const decodedKey = hexDecode(import.meta.env.VITE_APP_ID_KEY)
+    const decodedKey = hexDecode(import.meta.env.VITE_ENCRYPTION_KEY)
     const iv = CryptoJS.lib.WordArray.random(16)
     const ciphertext = CryptoJS.AES.encrypt(value.toString(), decodedKey, {
       iv: iv,
@@ -28,7 +28,7 @@ export const encryptMessage = (value) => {
 // Define the decryptMessage function
 export const decryptMessage = (encryptedHex) => {
   try {
-    const decodedKey = hexDecode(import.meta.env.VITE_APP_ID_KEY)
+    const decodedKey = hexDecode(import.meta.env.VITE_ENCRYPTION_KEY)
     const encryptedWA = hexDecode(encryptedHex)
     const iv = CryptoJS.lib.WordArray.create(encryptedWA.words.slice(0, 4))
     const ciphertext = CryptoJS.lib.WordArray.create(encryptedWA.words.slice(4))
@@ -51,7 +51,7 @@ const serializeData = (data) => JSON.stringify(data)
 // Function to deserialize data after decryption
 const deserializeData = (encryptedData) => {
   try {
-    const bytes = CryptoJS.AES.decrypt(encryptedData, import.meta.env.VITE_APP_ID_KEY)
+    const bytes = CryptoJS.AES.decrypt(encryptedData, import.meta.env.VITE_ENCRYPTION_KEY)
     const decryptedData = bytes.toString(CryptoJS.enc.Utf8)
     return JSON.parse(decryptedData)
   } catch (error) {
@@ -63,7 +63,7 @@ const deserializeData = (encryptedData) => {
 export const encryptCookie = (message) => {
   try {
     const serializedMessage = serializeData(message)
-    return CryptoJS.AES.encrypt(serializedMessage, import.meta.env.VITE_APP_ID_KEY).toString()
+    return CryptoJS.AES.encrypt(serializedMessage, import.meta.env.VITE_ENCRYPTION_KEY).toString()
   } catch (error) {
     console.error('Error encrypting message:', error)
     return null

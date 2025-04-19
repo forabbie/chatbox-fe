@@ -63,7 +63,7 @@
 import { ref } from 'vue'
 import { computed } from 'vue'
 import { useLayoutStore } from '@/stores/layout.store'
-import { getLocalStorage } from '@/utils/storageManager'
+import { getLocalStorage } from '@/utils/storage'
 import Button from 'primevue/button'
 import { onMounted } from 'vue'
 

@@ -14,7 +14,7 @@
           :pt="customPt"
           :class="{
             'p-inputtext': true,
-            'p-inputtext--invalid': submitted && errors.length
+            'p-inputtext--invalid': isSubmitted && errors.length
           }"
           @update:modelValue="handleInput"
           size="small"
@@ -27,7 +27,7 @@
           />
         </slot>
       </IconField>
-      <div v-if="submitted && errors.length" class="error-messages">
+      <div v-if="isSubmitted && errors.length" class="error-messages">
         <div v-for="(error, index) in errors" :key="index" class="error-message">
           {{ error }}
         </div>
@@ -57,7 +57,7 @@ const props = defineProps({
   modelValue: [String, Number],
   placeholder: String,
   disabled: Boolean,
-  submitted: Boolean
+  isSubmitted: Boolean
 })
 
 const customPt = {

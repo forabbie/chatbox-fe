@@ -1,7 +1,7 @@
 const authRoutes = [
   {
     path: '/auth',
-    name: 'Auth',
+    name: 'auth',
     redirect: { name: 'login' },
     component: () => import('@/views/AuthView.vue'),
     meta: { layout: 'auth', requiresGuest: true },
