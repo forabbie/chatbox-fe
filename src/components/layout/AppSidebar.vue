@@ -1,145 +1,106 @@
 <template>
-  <div
-    class="sidebar-wrapper !z-50 bg-white transition-all duration-300 ease-in-out"
-    :class="{ 'sidebar-anchored': isSidebarAnchored, 'sidebar-active': isExpanded }"
-    @mouseover="handleMouseOver()"
-    @mouseleave="handleMouseLeave()"
-  >
-    <span
-      class="border-surface-200 flex items-center justify-between gap-1 border-b py-2 pl-3 pr-[15px]"
-    >
-      <img src="/images/logo.svg" alt="app-logo" class="size-6" />
-      <Button
-        v-if="isSidebarAnchored || isExpanded"
-        label="Plain"
-        plain
-        text
-        class="border-0 !p-0 focus:ring-0"
-        @click="toggleSideBar"
-        @mouseover="isButtonHovered = true"
-        @mouseleave="isButtonHovered = false"
-      >
-        <img src="/icons/slide-default.svg" alt="slide-default" />
-      </Button>
-    </span>
-    <nav ref="sidebar" id="sidebar" class="px-2 py-3">
-      <ul v-for="(item, count) in items" :key="count" class="list-none text-slate-800">
-        <!-- Render separators -->
-        <li v-if="item.separator" class="my-2 border-b border-gray-200"></li>
+  <aside class="flex bg-fuchsia-950">
+    <div class="nav-content">
+      <!-- Logo Section -->
+      <section class="w-full">
+        <div class="logo-wrapper">
+          <img src="/images/logo.svg" alt="Company Logo" class="logo" height="28" width="28" />
+        </div>
+        <BaseDivider />
+      </section>
 
-        <!-- Render section labels -->
-        <li v-if="item.label" class="menu-item">
-          <span class="ms-1 font-bold">{{ item.label }}</span>
-        </li>
-
-        <!-- Render menu items -->
-        <li v-for="subItem in item.items" :key="subItem.label" class="menu-item">
-          <div class="item-content group">
+      <!-- Navigation -->
+      <nav class="nav p-2.5" role="navigation" aria-label="Main menu">
+        <ul class="flex w-full flex-col gap-2">
+          <li v-for="item in routes" :key="item.label" class="nav-item">
             <router-link
-              :to="subItem.route"
-              class="item-link"
-              :class="{
-                'justify-center': !isExpanded && !isSidebarAnchored,
-                'justify-start': isExpanded
-              }"
+              :to="item.route"
+              class="link group"
+              :aria-label="item.label"
               active-class="router-link-active"
-              @mouseover="hoveredItem = subItem.label"
-              @mouseleave="hoveredItem = null"
             >
-              <div class="flex items-center">
-                <span v-if="isExpanded || isSidebarAnchored" class="ml-2 text-nowrap font-medium">{{
-                  subItem.label
-                }}</span>
+              <div
+                class="icon-wrapper group-hover:bg-indigo-100/25 group-hover:shadow-sm group-hover:shadow-indigo-300/25"
+              >
+                <i aria-hidden="true" class="group-hover:text-white">
+                  <component :is="item.icon" />
+                </i>
               </div>
+              <span class="label text-2xs group-hover:text-white">{{ item.label }}</span>
             </router-link>
-          </div>
-        </li>
-      </ul>
-    </nav>
-  </div>
+          </li>
+        </ul>
+      </nav>
+    </div>
+
+    <!-- Vertical Divider -->
+    <BaseDivider layout="vertical" />
+  </aside>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { computed } from 'vue'
-import { useLayoutStore } from '@/stores/layout.store'
-import { getLocalStorage } from '@/utils/storage'
-import Button from 'primevue/button'
-import { onMounted } from 'vue'
+import BaseDivider from '@/components/common/BaseDivider.vue'
+import IconDashboard from '@/components/icons/IconDashboard.vue'
+import IconSwapHorizontal from '@/components/icons/IconSwapHorizontal.vue'
+// import IconWallet from '@/components/icons/IconWallet.vue'
+import { markRaw } from 'vue'
 
-const hoveredItem = ref(null)
-const isButtonHovered = ref(false)
-const layoutStore = useLayoutStore()
-const isSidebarAnchored = computed(() => layoutStore.isSidebarAnchored)
-const isExpanded = ref(false)
-
-const items = ref([
+const routes = [
   {
-    label: 'GENERAL',
-    items: [
-      {
-        label: 'Dashboard',
-        icon: 'dashboard',
-        route: '/dashboard'
-      },
-      {
-        label: 'Calendar',
-        icon: 'calendar',
-        route: '/calendar'
-      },
-      {
-        label: 'Clients',
-        icon: 'clients',
-        route: '/clients'
-      },
-      {
-        label: 'Service Board',
-        icon: 'service board',
-        route: '/service-board'
-      },
-      {
-        label: 'Scheduled Support',
-        icon: 'scheduled support',
-        route: '/scheduled-support'
-      },
-      {
-        label: 'Performance Pulse',
-        icon: 'performance',
-        route: '/performance-pulse'
-      }
-    ]
+    label: 'Channels',
+    icon: markRaw(IconDashboard),
+    route: '/channels'
   },
   {
-    separator: true
+    label: 'DMs',
+    icon: markRaw(IconSwapHorizontal),
+    route: '/dms'
   }
-])
-
-onMounted(() => {
-  const sidebarAnchoredValue = getLocalStorage('acp.isSidebarAnchored')
-  if (sidebarAnchoredValue != null) {
-    return (layoutStore.isSidebarAnchored = sidebarAnchoredValue)
-  }
-  return (isSidebarAnchored.value = layoutStore.isSidebarAnchored)
-})
-
-const toggleSideBar = () => {
-  layoutStore.toggleAnchoredSideBar()
-  if (!isSidebarAnchored.value) {
-    isExpanded.value = false
-  }
-}
-
-const handleMouseOver = () => {
-  if (!isSidebarAnchored.value) {
-    isExpanded.value = true
-  }
-}
-
-const handleMouseLeave = () => {
-  if (!isSidebarAnchored.value) {
-    isExpanded.value = false
-  }
-}
+  // {
+  //   label: 'Wallets',
+  //   icon: markRaw(IconWallet),
+  //   route: '/wallets'
+  // }
+]
 </script>
 
-<style scoped></style>
+<style scoped>
+.logo-wrapper {
+  @apply m-4 flex items-center justify-center;
+}
+
+.nav-content > .nav {
+  @apply flex flex-col items-center;
+}
+
+i {
+  @apply size-5 group-hover:scale-110;
+  display: flex;
+  place-items: center;
+  place-content: center;
+}
+
+.nav-item > .link {
+  @apply flex flex-col items-center justify-center text-white focus:outline-none focus-visible:ring-0;
+}
+
+.link > .icon-wrapper {
+  @apply flex items-center justify-center rounded-xl p-2.5;
+}
+
+.link > .label {
+  @apply mt-1 text-xs font-light;
+}
+
+.router-link-active {
+  @apply text-white;
+}
+
+.router-link-active .icon-wrapper {
+  @apply bg-slate-100/25 shadow-sm shadow-indigo-400/25;
+}
+
+.router-link-active i {
+  @apply scale-125;
+}
+</style>

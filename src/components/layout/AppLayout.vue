@@ -5,7 +5,7 @@
   >
     <AppSidebar />
     <section class="default-app-layout" :class="{ 'is-anchored-app-layout': !isSidebarAnchored }">
-      <header class="sticky top-0 z-10 w-full bg-[#F5F9FF]">
+      <header class="sticky top-0 z-10 w-full bg-fuchsia-950" v-if="false">
         <AppHeader />
       </header>
       <main class="flex-grow overflow-auto">
@@ -32,10 +32,10 @@ const isSidebarAnchored = computed(() => layoutStore.isSidebarAnchored)
 </script>
 
 <style scoped>
-.default-app-layout {
+/* .default-app-layout {
   @apply flex h-full w-10/12 flex-1 flex-col bg-[#F5F9FF] transition-all duration-300 ease-in-out;
 }
 .is-anchored-app-layout {
   @apply absolute left-[69px] w-[calc(100%-70px)];
-}
+} */
 </style>
