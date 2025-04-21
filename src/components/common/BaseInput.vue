@@ -1,7 +1,7 @@
 <template>
   <div class="input-container">
     <label v-if="label" :for="name">{{ label }}</label>
-    <vee-field :name="name" v-slot="{ field, meta, errors }" :bails="false">
+    <vee-field :name="name" v-slot="{ field, errors }" :bails="false">
       <IconField>
         <slot name="before"></slot>
         <InputText

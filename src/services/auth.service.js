@@ -20,6 +20,28 @@ export const loginService = async (credentials) => {
   }
 }
 
+// Function to handle user registration
+export const registerService = async (user) => {
+  try {
+    const encryptedPassword = encryptMessage(user.password)
+
+    const formData = new URLSearchParams()
+    formData.append('firstname', user.firstname)
+    formData.append('lastname', user.lastname)
+    formData.append('username', user.username)
+    formData.append('emailaddress', user.emailaddress)
+    formData.append('password', encryptedPassword)
+    formData.append('is_active', true)
+
+    axiosInstance.defaults.headers['Content-Type'] = 'application/x-www-form-urlencoded'
+    const response = await axiosInstance.post('/auth/register', formData)
+    return response.data
+  } catch (error) {
+    console.error('Login error:', error)
+    throw error
+  }
+}
+
 // Function to refresh access token using refresh token
 export const getNewTokenService = async (token) => {
   try {

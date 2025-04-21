@@ -15,18 +15,40 @@
             <router-link to="/auth/login" class="text-link ml-2">Sign in</router-link>
           </span>
         </div>
-        <vee-form ref="regosterform" :validation-schema="schema" @submit="validateForm">
-          <BaseInput name="name" label="Name" v-model="form.name">
+        <vee-form ref="registerform" :validation-schema="schema">
+          <div class="grid grid-cols-12 gap-4">
+            <div class="col-span-6">
+              <BaseInput name="firstname" label="First Name" v-model="form.firstname">
+                <template #before>
+                  <InputIcon class="pi pi-user" />
+                </template>
+              </BaseInput>
+            </div>
+            <div class="col-span-6">
+              <BaseInput name="lastname" label="Last Name" v-model="form.lastname">
+                <template #before>
+                  <InputIcon class="pi pi-user" />
+                </template>
+              </BaseInput>
+            </div>
+          </div>
+
+          <BaseInput
+            name="username"
+            label="Username"
+            v-model="form.username"
+            :isSubmitted="isSubmitted"
+          >
             <template #before>
               <InputIcon class="pi pi-user" />
             </template>
           </BaseInput>
 
           <BaseInput
-            name="email address"
+            name="emailaddress"
             label="Email Address"
-            v-model="form.email"
-            :submitted="submitted"
+            v-model="form.emailaddress"
+            :isSubmitted="isSubmitted"
           >
             <template #before>
               <InputIcon class="pi pi-envelope" />
@@ -38,7 +60,7 @@
             label="Password"
             type="password"
             v-model="form.password"
-            :submitted="submitted"
+            :isSubmitted="isSubmitted"
           >
             <template #before>
               <InputIcon class="pi pi-lock" />
@@ -50,7 +72,7 @@
             label="Confirm Password"
             type="password"
             v-model="form.confirmPassword"
-            :submitted="submitted"
+            :isSubmitted="isSubmitted"
           >
             <template #before>
               <InputIcon class="pi pi-lock" />
@@ -63,7 +85,7 @@
               label="Accept terms of service"
               v-model="form.tos"
               binary
-              :submitted="submitted"
+              :isSubmitted="isSubmitted"
             />
           </div>
 
@@ -74,7 +96,7 @@
             :disabled="false"
             :inactive="false"
             :loading="false"
-            @click.prevent="validateForm"
+            @click.prevent="handleFormSubmit"
             >Sign In</BaseButton
           >
         </vee-form>
@@ -83,43 +105,52 @@
   </div>
 </template>
 <script setup>
-import { ref } from 'vue'
-
 import InputIcon from 'primevue/inputicon'
 
 import BaseInput from '@/components/common/BaseInput.vue'
 import BaseCheckbox from '@/components/common/BaseCheckbox.vue'
 import BaseButton from '@/components/common/BaseButton.vue'
 
-const submitted = ref(false)
+import RegisterFunctions from './register.js'
+
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const { register } = RegisterFunctions()
+
+const isSubmitted = ref(false)
 const form = ref({
-  email: '',
+  emailaddress: '',
   password: '',
-  name: '',
+  firstname: '',
+  lastname: '',
   confirmPassword: '',
   tos: false
 })
 
 const schema = {
-  name: 'required',
-  'email address': 'required|email',
+  username: 'required',
+  emailaddress: 'required|email',
   password: 'required|min:9|max:36|excluded:password',
-  'confirm password': 'password_mismatch:@password',
+  'confirm password': 'required|password_mismatch:@password',
   tos: 'tos'
 }
 
-const regosterform = ref(null)
+const registerform = ref(null)
 
-const validateForm = async (values) => {
-  submitted.value = true
-  const { valid } = await regosterform.value.validate()
-  // console.log('Validation result:', { valid, errors }) // Debugging
+const handleFormSubmit = async () => {
+  isSubmitted.value = true
+  const { valid } = await registerform.value.validate()
 
-  if (!valid) {
-    return
-  }
+  if (!valid) return
+
+  await register(form.value)
+
+  router.push({ name: 'home' })
 
   // Proceed with form submission
-  console.log('Form submitted with values:', values)
+  // console.log('Form submitted with values:', values)
 }
 </script>
