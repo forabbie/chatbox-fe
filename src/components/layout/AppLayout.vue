@@ -8,10 +8,10 @@
       <header class="sticky top-0 z-10 w-full">
         <AppHeader />
       </header>
-      <main class="flex-grow overflow-auto rounded-xl bg-slate-900">
+      <main class="flex-grow overflow-auto rounded-t-lg bg-slate-900">
         <div class="flex h-full flex-col">
           <router-view :key="$route.path"></router-view>
-          <footer class="mt-auto px-4 py-4">
+          <footer v-if="false" class="mt-auto px-4 py-4">
             <AppFooter class="" />
           </footer>
         </div>

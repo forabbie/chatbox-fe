@@ -4,7 +4,7 @@
       <!-- Logo Section -->
       <section class="w-full">
         <div class="logo-wrapper">
-          <img src="/images/logo.svg" alt="Company Logo" class="logo" height="28" width="28" />
+          <img src="/images/logo.svg" alt="Company Logo" class="logo" height="24" width="24" />
         </div>
         <BaseDivider />
       </section>
