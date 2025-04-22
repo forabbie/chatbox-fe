@@ -1,5 +1,5 @@
 <template>
-  <aside class="flex bg-fuchsia-950">
+  <aside class="flex">
     <div class="nav-content">
       <!-- Logo Section -->
       <section class="w-full">
@@ -11,7 +11,7 @@
 
       <!-- Navigation -->
       <nav class="nav p-2.5" role="navigation" aria-label="Main menu">
-        <ul class="flex w-full flex-col gap-2">
+        <ul class="flex w-full flex-col gap-4">
           <li v-for="item in routes" :key="item.label" class="nav-item">
             <router-link
               :to="item.route"
@@ -23,10 +23,10 @@
                 class="icon-wrapper group-hover:bg-indigo-100/25 group-hover:shadow-sm group-hover:shadow-indigo-300/25"
               >
                 <i aria-hidden="true" class="group-hover:text-white">
-                  <component :is="item.icon" />
+                  <component :is="item.icon" :active="item.route === route.path" />
                 </i>
               </div>
-              <span class="label text-2xs group-hover:text-white">{{ item.label }}</span>
+              <span class="label group-hover:text-white">{{ item.label }}</span>
             </router-link>
           </li>
         </ul>
@@ -40,27 +40,25 @@
 
 <script setup>
 import BaseDivider from '@/components/common/BaseDivider.vue'
-import IconDashboard from '@/components/icons/IconDashboard.vue'
-import IconSwapHorizontal from '@/components/icons/IconSwapHorizontal.vue'
-// import IconWallet from '@/components/icons/IconWallet.vue'
+import IconHome from '@/components/icons/IconHome.vue'
+import IconMessage from '@/components/icons/IconMessage.vue'
+
 import { markRaw } from 'vue'
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
 
 const routes = [
   {
     label: 'Channels',
-    icon: markRaw(IconDashboard),
+    icon: markRaw(IconHome),
     route: '/channels'
   },
   {
     label: 'DMs',
-    icon: markRaw(IconSwapHorizontal),
+    icon: markRaw(IconMessage),
     route: '/dms'
   }
-  // {
-  //   label: 'Wallets',
-  //   icon: markRaw(IconWallet),
-  //   route: '/wallets'
-  // }
 ]
 </script>
 
@@ -74,7 +72,7 @@ const routes = [
 }
 
 i {
-  @apply size-5 group-hover:scale-110;
+  @apply size-4 group-hover:scale-125;
   display: flex;
   place-items: center;
   place-content: center;
@@ -89,11 +87,7 @@ i {
 }
 
 .link > .label {
-  @apply mt-1 text-xs font-light;
-}
-
-.router-link-active {
-  @apply text-white;
+  @apply mt-1.5 text-[0.65rem] font-light;
 }
 
 .router-link-active .icon-wrapper {
