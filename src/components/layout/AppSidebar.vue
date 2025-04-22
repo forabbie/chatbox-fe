@@ -70,9 +70,8 @@ const routes = [
 .nav-content > .nav {
   @apply flex flex-col items-center;
 }
-
 i {
-  @apply size-4 group-hover:scale-125;
+  @apply size-5;
   display: flex;
   place-items: center;
   place-content: center;
@@ -92,9 +91,5 @@ i {
 
 .router-link-active .icon-wrapper {
   @apply bg-slate-100/25 shadow-sm shadow-indigo-400/25;
-}
-
-.router-link-active i {
-  @apply scale-125;
 }
 </style>
