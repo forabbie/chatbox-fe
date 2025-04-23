@@ -1,16 +1,15 @@
-import { createChannelService } from '@/services/channel.service'
+import { postChannelService } from '@/services/channel.service'
 // import { useAuthStore } from '@/stores/channel.store'
 
 // const authStore = useAuthStore()
 
 const ChannelFunctions = () => {
-  const postChannel = async (channelDetails) => {
+  const postChannel = async (channelData) => {
     try {
-      const data = await createChannelService(channelDetails)
-      console.log(data)
+      const data = await postChannelService(channelData)
+      return data.response
     } catch (err) {
-      console.error(err)
-      throw new Error('Login failed')
+      throw err
     }
   }
 

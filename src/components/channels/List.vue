@@ -1,22 +1,22 @@
 <template>
   <div class="">
     <div class="flex items-center justify-between px-8 py-4">
-      <h2 class="text-start text-xl font-bold">Channel</h2>
+      <h2 class="text-start text-xl font-bold">Channels</h2>
       <Button
         icon="pi pi-pen-to-square"
         aria-label="Create Channel"
-        @click="createChannel"
+        @click="openNew"
         pt:root="btn"
       />
     </div>
-    <ul class="p-4">
+    <ul v-if="channels.length" class="p-4">
       <li
         v-for="channel in channels"
         :key="channel.id"
-        @click="selectChannel(channel)"
+        @click="setActiveChannel(channel)"
         :class="[
-          'flex cursor-pointer items-center justify-between rounded-lg border-b border-fuchsia-950 px-4 py-2',
-          selectedChannelId === channel.id
+          'flex cursor-pointer items-center justify-between rounded-lg px-4 py-2',
+          activeChannel === channel.id
             ? 'bg-fuchsia-50/60 text-slate-800'
             : 'text-white/80 hover:bg-fuchsia-50/10'
         ]"
@@ -31,31 +31,49 @@
         </div>
       </li>
     </ul>
+    <div v-else class="flex h-40 w-full items-center justify-center">
+      <span class="text-sm">No channel found.</span>
+    </div>
   </div>
 </template>
 
 <script setup>
 import Button from 'primevue/button'
 
-import { ref } from 'vue'
+import { computed, onMounted } from 'vue'
 
-const channels = [
-  { id: 1, name: 'Lorem Ipsum', avatar: 'https://via.placeholder.com/150', unread: true },
-  { id: 2, name: 'Dolor Sit Amet', avatar: 'https://via.placeholder.com/150', unread: false },
-  {
-    id: 3,
-    name: 'Consectetur Adipiscing',
-    avatar: 'https://via.placeholder.com/150',
-    unread: true
-  },
-  { id: 4, name: 'Elit Sed Do', avatar: 'https://via.placeholder.com/150', unread: false },
-  { id: 5, name: 'Eiusmod Tempor', avatar: 'https://via.placeholder.com/150', unread: true }
-]
+import { useChannelsStore } from '@/stores/channel.store'
 
-const selectedChannelId = ref(channels.length ? channels[0].id : null)
+const channelStore = useChannelsStore()
 
-function selectChannel(channel) {
-  selectedChannelId.value = channel.id
+onMounted(() => {
+  loadChannels()
+})
+
+const loadChannels = async () => {
+  try {
+    await channelStore.setChannels()
+    setActiveChannel(channels.value.length ? channels.value[0] : null)
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+const channels = computed(() => {
+  return channelStore.channels
+})
+
+const activeChannel = computed(() => {
+  return channelStore.activeChannel
+})
+
+const setActiveChannel = (channel) => {
+  channelStore.setActiveChannel(channel.id)
+}
+
+const emit = defineEmits(['open-dialog'])
+const openNew = () => {
+  emit('open-dialog')
 }
 </script>
 

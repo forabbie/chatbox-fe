@@ -1,17 +1,18 @@
-import { createApp } from 'vue'
-import App from './App.vue'
+import './styles/main.scss'
+import 'primeicons/primeicons.css'
 
-import router from './router'
+import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+
+import App from './App.vue'
+import router from './router'
 
 import PrimeVue from 'primevue/config'
 import Lara from '@primevue/themes/lara'
 import { definePreset } from '@primevue/themes'
 
 import VeeValidatePlugin from './plugins/validation'
-
-import './styles/main.scss'
-import 'primeicons/primeicons.css'
+import ToastService from 'primevue/toastservice'
 
 const app = createApp(App)
 
@@ -94,5 +95,6 @@ app.use(PrimeVue, {
   }
 })
 app.use(VeeValidatePlugin)
+app.use(ToastService)
 
 app.mount('#app')

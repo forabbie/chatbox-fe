@@ -1,9 +1,19 @@
 import axiosInstance from '@/services/instance.service'
 
-export const createChannelService = async (channelDetails) => {
+export const listChannelService = async () => {
   try {
     axiosInstance.defaults.headers['Content-Type'] = 'application/json'
-    const response = await axiosInstance.post('/channel', channelDetails)
+    const response = await axiosInstance.get('/channels')
+    return response.data
+  } catch (error) {
+    throw error
+  }
+}
+
+export const postChannelService = async (channelData) => {
+  try {
+    axiosInstance.defaults.headers['Content-Type'] = 'application/json'
+    const response = await axiosInstance.post('/channel', channelData)
     return response.data
   } catch (error) {
     throw error
