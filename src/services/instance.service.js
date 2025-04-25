@@ -3,6 +3,7 @@ import { useAuthStore } from '@/stores/auth.store'
 import { clearAllStorage } from '@/utils/storage'
 import { getCookie } from '@/utils/cookies'
 import { getRefreshTokenExpiration } from '@/utils/token'
+import router from '@/router'
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_APP_API_BASE_URL,
@@ -53,6 +54,14 @@ axiosInstance.interceptors.response.use(
     const isLoggedIn = authStore.isAuthenticated
     const hasAccessToken = !!authStore.accessToken
     const refreshTokenValid = getRefreshTokenExpiration(authStore.refreshToken) > 0
+
+    // Handle if server is down or no response was received
+    if (!error.response) {
+      console.error('Network or Server Error:', error.message)
+      // Optional: Custom global error handler
+      alert('Server is currently unreachable. Please try again later.')
+      return Promise.reject(error)
+    }
 
     // Handle 401 Unauthorized errors only
     if (is401 && !hasRetried) {
