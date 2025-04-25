@@ -94,11 +94,9 @@ const handleFormSubmit = async () => {
   isInSubmission.value = true
 
   const { valid } = await refloginform.value.validate()
-
   if (!valid) return
 
   await performLogin(form.value)
-
-  router.push({ name: 'home' })
+  router.push({ name: 'channels' })
 }
 </script>

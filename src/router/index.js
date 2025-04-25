@@ -1,10 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
+// import { useChannelsStore } from '@/stores/channel.store'
 import authRoutes from './routes/auth'
 import workspaceRoutes from './routes/workspace'
-import dmsRoutes from './routes/dms'
-import channelsRoutes from './routes/channels'
 // import settingsRoutes from "./routes/settings";
-// import { useAuthStore } from '@/stores/auth.store'
 
 const Error403 = () => import(/* webpackChunkName: "pages-error403" */ '../views/Error403View.vue')
 const Error404 = () => import(/* webpackChunkName: "pages-error404" */ '../views/Error404View.vue')
@@ -14,13 +12,51 @@ const routes = [
   { path: '/', redirect: { name: 'auth' } },
   ...authRoutes,
   ...workspaceRoutes,
-  ...dmsRoutes,
-  ...channelsRoutes,
   // ...settingsRoutes,
   // {
-  //   path: "/:pathMatch(.*)*",
-  //   component: () => import("@/views/NotFoundView.vue"),
+  //   name: 'channels',
+  //   path: '/channels',
+  //   component: () => import('@/views/ChannelView.vue'),
+  //   meta: { layout: 'app', requiresAuth: true }
   // },
+  // {
+  //   name: 'channel',
+  //   path: '/channel/:id',
+  //   component: () => import('@/views/ChannelView.vue'),
+  //   meta: { layout: 'app', requiresAuth: true }
+  // },
+  // {
+  //   path: '/channel',
+  //   redirect: () => {
+  //     const store = useChannelsStore()
+  //     const firstChannel = store.channels?.[0]
+  //     return firstChannel ? `/channel/${firstChannel.id}` : '/no-channels'
+  //   }
+  // },
+  {
+    path: '/channel',
+    name: 'channels',
+    component: () => import('@/layouts/ChannelLayout.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+    children: [
+      {
+        path: ':id',
+        name: 'channel',
+        component: () => import('@/views/channels/ChannelView.vue')
+      },
+      {
+        path: 'no-channels',
+        name: 'no-channels',
+        component: () => import('@/views/channels/NoChannelsView.vue')
+      }
+    ]
+  },
+  {
+    name: 'dms',
+    path: '/dms',
+    component: () => import('@/views/DirectMessageView.vue'),
+    meta: { layout: 'app', requiresAuth: true }
+  },
   {
     path: '/pages/error403',
     name: 'error403',
@@ -40,10 +76,12 @@ const routes = [
     meta: { layout: 'auth' }
   },
   {
-    path: '/:catchAll(.*)',
+    // path: '/:catchAll(.*)',
+    path: '/:pathMatch(.*)*',
     redirect: { name: 'error404' }
   }
 ]
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
@@ -75,7 +113,7 @@ router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     next({ name: 'auth' })
   } else if (to.meta.requiresGuest && authStore.isAuthenticated) {
-    next({ name: 'home' })
+    next({ name: 'channel-redirect' })
   } else {
     next()
   }

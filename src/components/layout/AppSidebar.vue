@@ -15,15 +15,14 @@
           <li v-for="item in routes" :key="item.label" class="nav-item">
             <router-link
               :to="item.route"
-              class="link group"
+              :class="['link group', { 'router-link-active': isRouteActive(item) }]"
               :aria-label="item.label"
-              active-class="router-link-active"
             >
               <div
                 class="icon-wrapper group-hover:bg-indigo-100/25 group-hover:shadow-sm group-hover:shadow-indigo-300/25"
               >
                 <i aria-hidden="true" class="group-hover:text-white">
-                  <component :is="item.icon" :active="item.route === route.path" />
+                  <component :is="item.icon" :active="isRouteActive(item)" />
                 </i>
               </div>
               <span class="label group-hover:text-white">{{ item.label }}</span>
@@ -32,7 +31,6 @@
         </ul>
       </nav>
     </div>
-
     <!-- Vertical Divider -->
     <BaseDivider layout="vertical" />
   </aside>
@@ -43,23 +41,42 @@ import BaseDivider from '@/components/common/BaseDivider.vue'
 import IconHome from '@/components/icons/IconHome.vue'
 import IconMessage from '@/components/icons/IconMessage.vue'
 
-import { markRaw } from 'vue'
+import { computed, markRaw } from 'vue'
 import { useRoute } from 'vue-router'
 
-const route = useRoute()
+import { useChannelsStore } from '@/stores/channel.store'
 
-const routes = [
-  {
-    label: 'Channels',
-    icon: markRaw(IconHome),
-    route: '/channels'
-  },
-  {
-    label: 'DMs',
-    icon: markRaw(IconMessage),
-    route: '/dms'
+const channelStore = useChannelsStore()
+
+const route = useRoute()
+const routes = computed(() => {
+  const firstChannel = channelStore.channels?.[0]
+  let rchannel = '/channel/no-channels'
+
+  if (firstChannel) {
+    rchannel = `/channel/${firstChannel.id}`
   }
-]
+
+  return [
+    {
+      label: 'Channels',
+      icon: markRaw(IconHome),
+      route: rchannel
+    },
+    {
+      label: 'DMs',
+      icon: markRaw(IconMessage),
+      route: '/dms'
+    }
+  ]
+})
+
+const isRouteActive = (item) => {
+  if (item.label === 'Channels') {
+    return route.path.startsWith('/channel/')
+  }
+  return route.path === item.route
+}
 </script>
 
 <style scoped>

@@ -5,8 +5,8 @@
 <script setup>
 import { computed } from 'vue'
 
-import appLayout from '@/components/layout/AppLayout.vue'
-import authLayout from '@/components/layout/AuthLayout.vue'
+import appLayout from '@/layouts/AppLayout.vue'
+import authLayout from '@/layouts/AuthLayout.vue'
 
 import { useLayoutStore } from '@/stores/layout.store'
 

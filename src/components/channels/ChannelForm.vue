@@ -1,13 +1,12 @@
 <template>
   <Toast pt:root="custom-toast" />
-
-  <div class="grid h-full w-full grid-cols-12 gap-4 text-white">
-    <div class="col-span-4 bg-fuchsia-950/60">
-      <ChannelList @open-dialog="openNew" />
-    </div>
-    <div class="col-span-6"></div>
-  </div>
-
+  <Button
+    v-show="false"
+    icon="pi pi-pen-to-square"
+    aria-label="Create Channel"
+    @click="openNew"
+    pt:root="btn"
+  />
   <Dialog
     v-model:visible="channelDialog"
     :style="{ width: '450px' }"
@@ -93,16 +92,16 @@ import Chip from 'primevue/chip'
 import Toast from 'primevue/toast'
 import Dialog from 'primevue/dialog'
 
-import ChannelList from '@/components/channels/List.vue'
-
 import { ref } from 'vue'
 import { useToast } from 'primevue/usetoast'
 
 import UserFunctions from '@/components/users/user'
 import ChannelFunctions from '@/components/channels/channel'
 
+import { useRouter } from 'vue-router'
 import { useChannelsStore } from '@/stores/channel.store'
 
+const router = useRouter()
 const channelStore = useChannelsStore()
 
 const { listUsers } = UserFunctions()
@@ -127,9 +126,34 @@ const openNew = async () => {
   users.value = await listUsers()
 }
 
+defineExpose({
+  triggerClick: openNew
+})
+
 const hideDialog = () => {
   channelDialog.value = false
   submitted.value = false
+}
+
+const createChannel = async (channelData) => {
+  try {
+    const data = await postChannel(channelData)
+    toast.add({
+      severity: 'success',
+      summary: 'Successful',
+      detail: 'Channel Created',
+      life: 3000
+    })
+    return data
+  } catch (error) {
+    console.error('Error creating channel:', error)
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Failed to create channel',
+      life: 3000
+    })
+  }
 }
 
 const saveChannel = async () => {
@@ -148,26 +172,10 @@ const saveChannel = async () => {
         life: 3000
       })
     } else {
-      await postChannel(channelData)
-        .then(() => {
-          toast.add({
-            severity: 'success',
-            summary: 'Successful',
-            detail: 'Channel Created',
-            life: 3000
-          })
-        })
-        .catch((error) => {
-          console.error('Error creating channel:', error)
-          toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Failed to create channel',
-            life: 3000
-          })
-        })
+      await createChannel(channelData)
     }
     await channelStore.setChannels()
+    router.push({ name: 'channels' })
     hideDialog()
     channel.value = {
       name: '',
