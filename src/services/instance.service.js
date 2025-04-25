@@ -1,9 +1,8 @@
 import axios from 'axios'
+import router from '@/router'
 import { useAuthStore } from '@/stores/auth.store'
-import { clearAllStorage } from '@/utils/storage'
 import { getCookie } from '@/utils/cookies'
 import { getRefreshTokenExpiration } from '@/utils/token'
-import router from '@/router'
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_APP_API_BASE_URL,
@@ -106,8 +105,7 @@ axiosInstance.interceptors.response.use(
 
         // Only log out if session hasn't already been marked as expired
         if (!authStore.isSessionExpired) {
-          authStore.logoutUser()
-          clearAllStorage()
+          await authStore.logoutUser()
           router.push('/auth/login')
         }
 

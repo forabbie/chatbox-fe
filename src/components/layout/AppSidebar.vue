@@ -1,35 +1,45 @@
 <template>
   <aside class="flex">
-    <div class="nav-content">
-      <!-- Logo Section -->
-      <section class="w-full">
-        <div class="logo-wrapper">
-          <img src="/images/logo.svg" alt="Company Logo" class="logo" height="24" width="24" />
-        </div>
-        <BaseDivider />
-      </section>
+    <div class="nav-content flex h-screen flex-col justify-between">
+      <div>
+        <!-- Logo Section -->
+        <section class="w-full">
+          <div class="logo-wrapper">
+            <img src="/images/logo.svg" alt="Company Logo" class="logo" height="24" width="24" />
+          </div>
+          <BaseDivider />
+        </section>
 
-      <!-- Navigation -->
-      <nav class="nav p-2.5" role="navigation" aria-label="Main menu">
-        <ul class="flex w-full flex-col gap-4">
-          <li v-for="item in routes" :key="item.label" class="nav-item">
-            <router-link
-              :to="item.route"
-              :class="['link group', { 'router-link-active': isRouteActive(item) }]"
-              :aria-label="item.label"
-            >
-              <div
-                class="icon-wrapper group-hover:bg-indigo-100/25 group-hover:shadow-sm group-hover:shadow-indigo-300/25"
+        <!-- Navigation -->
+        <nav class="nav p-2.5" role="navigation" aria-label="Main menu">
+          <ul class="flex w-full flex-col gap-4">
+            <li v-for="item in routes" :key="item.label" class="nav-item">
+              <router-link
+                :to="item.route"
+                :class="['link group', { 'router-link-active': isRouteActive(item) }]"
+                :aria-label="item.label"
               >
-                <i aria-hidden="true" class="group-hover:text-white">
-                  <component :is="item.icon" :active="isRouteActive(item)" />
-                </i>
-              </div>
-              <span class="label group-hover:text-white">{{ item.label }}</span>
-            </router-link>
-          </li>
-        </ul>
-      </nav>
+                <div
+                  class="icon-wrapper group-hover:bg-indigo-100/25 group-hover:shadow-sm group-hover:shadow-indigo-300/25"
+                >
+                  <i aria-hidden="true" class="group-hover:text-white">
+                    <component :is="item.icon" :active="isRouteActive(item)" />
+                  </i>
+                </div>
+                <span class="label group-hover:text-white">{{ item.label }}</span>
+              </router-link>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      <div class="mb-4 flex flex-col items-center p-2.5">
+        <Button
+          icon="pi pi-sign-out"
+          aria-label="Create Channel"
+          pt:root="custom-btn"
+          @click.prevent="logout"
+        />
+      </div>
     </div>
     <!-- Vertical Divider -->
     <BaseDivider layout="vertical" />
@@ -37,16 +47,21 @@
 </template>
 
 <script setup>
+import Button from 'primevue/button'
 import BaseDivider from '@/components/common/BaseDivider.vue'
 import IconHome from '@/components/icons/IconHome.vue'
 import IconMessage from '@/components/icons/IconMessage.vue'
+
+import router from '@/router'
 
 import { computed, markRaw } from 'vue'
 import { useRoute } from 'vue-router'
 
 import { useChannelsStore } from '@/stores/channel.store'
+import { useAuthStore } from '@/stores/auth.store.js'
 
 const channelStore = useChannelsStore()
+const authStore = useAuthStore()
 
 const route = useRoute()
 const routes = computed(() => {
@@ -76,6 +91,11 @@ const isRouteActive = (item) => {
     return route.path.startsWith('/channel/')
   }
   return route.path === item.route
+}
+
+const logout = async () => {
+  await authStore.logoutUser()
+  router.push('/auth/login')
 }
 </script>
 

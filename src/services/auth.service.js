@@ -56,3 +56,13 @@ export const getNewTokenService = async (token) => {
     throw error
   }
 }
+
+export const logoutService = async () => {
+  try {
+    const response = await axiosInstance.post('/auth/logout')
+    return response.data
+  } catch (error) {
+    console.error('Logout error:', error)
+    throw error
+  }
+}

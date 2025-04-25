@@ -1,4 +1,5 @@
 import { utf8ToB64, b64ToUtf8 } from './hash'
+import { clearAllCookies } from './cookies'
 
 // Sets a key-value pair in localStorage after encoding the value in Base64
 export const setLocalStorage = (key, str) => {

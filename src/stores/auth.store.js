@@ -1,7 +1,9 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { getCookie, setCookie } from '@/utils/cookies'
 import { setLocalStorage, getLocalStorage } from '@/utils/storage'
+import { logoutService } from '@/services/auth.service.js'
+import { getCookie, setCookie } from '@/utils/cookies'
+import { clearAllStorage } from '@/utils/storage'
 
 export const useAuthStore = defineStore('auth', () => {
   const isSessionExpired = ref(false)
@@ -31,6 +33,22 @@ export const useAuthStore = defineStore('auth', () => {
     isSessionExpired.value = value
   }
 
+  const clearAuthState = () => {
+    isAuthenticated.value = false
+    accessToken.value = null
+    refreshToken.value = null
+    setCookie('cb.rfc7519', '', -1)
+    setCookie('cb.refresh_token', '', -1)
+    setLocalStorage('isAuthenticated', false)
+  }
+
+  const logoutUser = async () => {
+    await logoutService()
+    clearAuthState()
+    toggleSessionExpired(false)
+    clearAllStorage()
+  }
+
   initAuthState()
 
   return {
@@ -40,6 +58,7 @@ export const useAuthStore = defineStore('auth', () => {
     refreshToken,
     setTokens,
     toggleSessionExpired,
-    toggleAuthentication
+    toggleAuthentication,
+    logoutUser
   }
 })
