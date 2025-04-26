@@ -113,7 +113,7 @@ router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     next({ name: 'auth' })
   } else if (to.meta.requiresGuest && authStore.isAuthenticated) {
-    next({ name: 'channel-redirect' })
+    next({ name: 'channels' })
   } else {
     next()
   }
