@@ -1,9 +1,10 @@
 import { ref } from 'vue'
-// import { getCookie } from '@/utils/storageManager'
-// import { useAuthStore } from '@/stores/authStore'
+import { getCookie } from '@/utils/cookies'
+import { getAccessTokenExpiration } from '@/utils/token'
+import { useAuthStore } from '@/stores/auth.store'
 
 export const useWebSocket = () => {
-  // const authStore = useAuthStore()
+  const authStore = useAuthStore()
 
   const socket = ref(null)
   const retryCount = ref(0)
@@ -12,26 +13,33 @@ export const useWebSocket = () => {
   const MAX_RETRIES = 3
   const INITIAL_RETRY_DELAY = 2000
 
-  // const getFreshToken = async () => {
-  //   try {
-  //     await authStore.checkTokenExpiration()
-  //     const token = getCookie('acp.rfc7519')
-  //     if (!token) throw new Error('Token not found')
-  //     return token
-  //   } catch (error) {
-  //     console.error('Error fetching token:', error)
-  //     throw new Error('Token fetch failed')
-  //   }
-  // }
+  const getToken = async () => {
+    try {
+      // Check if the access token is valid
+      const tokenValid = getAccessTokenExpiration(authStore.accessToken) > 0
+      if (tokenValid) {
+        return authStore.accessToken
+      }
+
+      // If token is invalid, attempt to get it from cookies
+      const token = getCookie('cb.rfc7519')
+      if (!token) throw new Error('Token not found')
+
+      return token
+    } catch (error) {
+      console.error('Error fetching token:', error)
+      throw error // Rethrow the error to propagate it if needed
+    }
+  }
 
   const createWebSocketUrl = async (baseWsUrl, params = {}) => {
-    // const token = await getFreshToken()
+    const token = await getToken()
 
     // Construct query params dynamically
     const queryParams = new URLSearchParams({
       v: '1.0',
       token: token,
-      ...params // Spread additional params
+      ...params
     })
 
     return `${baseWsUrl}?${queryParams.toString()}`

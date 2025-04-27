@@ -19,12 +19,12 @@ const routes = [
   //   component: () => import('@/views/ChannelView.vue'),
   //   meta: { layout: 'app', requiresAuth: true }
   // },
-  // {
-  //   name: 'chat',
-  //   path: '/chat',
-  //   component: () => import('@/views/TestChatView.vue'),
-  //   meta: { layout: 'auth' }
-  // },
+  {
+    name: 'chat',
+    path: '/chat',
+    component: () => import('@/views/TestChatView.vue'),
+    meta: { layout: 'app', requiresAuth: true }
+  },
   {
     path: '/channel',
     name: 'channels',

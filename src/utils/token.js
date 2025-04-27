@@ -20,6 +20,21 @@ export const parseUserIdFromToken = () => {
   }
 }
 
+export const getAccessTokenExpiration = (access_token) => {
+  if (!access_token) return 0
+
+  const tokenParts = JSON.parse(atob(access_token.split('.')[1]))
+  const now = Math.ceil(Date.now() / 1000)
+
+  if (tokenParts.exp > now) {
+    const cookiesExpiration = tokenParts.exp - now
+    let min = Math.floor((cookiesExpiration / 60) << 0)
+    min = min + 120
+
+    return min
+  }
+}
+
 export const getRefreshTokenExpiration = (refresh_token) => {
   if (!refresh_token) return 0
 

@@ -5,12 +5,13 @@
     <div class="input-area">
       <input
         id="input"
+        v-model="message"
         type="text"
         placeholder="Type your message here..."
-        @keyup.enter="sendMessage"
+        @keyup.enter="onSendMessage"
         class="message-input"
       />
-      <button @click="sendMessage" class="send-button">
+      <button @click="onSendMessage" class="send-button">
         <span>Send</span>
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -32,7 +33,65 @@
 </template>
 
 <script setup>
-import { ref, onBeforeUnmount } from 'vue'
+import { useWebSocket } from '@/composables/useWebSocket'
+import { onMounted, onUnmounted, ref } from 'vue'
+
+const message = ref('')
+const output = ref(null)
+const connectionStatus = ref('connecting')
+const statusMessages = {
+  connecting: 'Connecting to server...',
+  connected: 'Connected ✓',
+  disconnected: 'Disconnected ✗',
+  error: 'Connection error!'
+}
+
+const { initWebSocket, sendMessage, closeWebSocket } = useWebSocket()
+
+onMounted(() => {
+  initWebSocket({
+    baseWsUrl: import.meta.env.VITE_WBS_BASE_URL + '/chat' + '/123',
+    onMessageCallback: (data) => {
+      console.log('WebSocket Message:', data)
+      addMessage(data.sender || 'User', data.content || event.data)
+    }
+  })
+})
+
+const addMessage = (sender, message) => {
+  const messageElement = document.createElement('div')
+  messageElement.classList.add('message')
+
+  const senderElement = document.createElement('span')
+  senderElement.classList.add('sender')
+  senderElement.textContent = `${sender}: `
+
+  const contentElement = document.createElement('span')
+  contentElement.classList.add('content')
+  contentElement.textContent = message
+
+  messageElement.appendChild(senderElement)
+  messageElement.appendChild(contentElement)
+  output.value.appendChild(messageElement)
+  output.value.scrollTop = output.value.scrollHeight
+}
+
+const onSendMessage = () => {
+  if (message.value.trim()) {
+    const msg = { content: message.value }
+    sendMessage(msg)
+    // addMessage('You', message.value)
+    message.value = ''
+  } else {
+    console.warn('Message cannot be empty.')
+  }
+}
+
+onUnmounted(() => {
+  closeWebSocket()
+})
+
+/* import { ref, onBeforeUnmount } from 'vue'
 
 const output = ref(null)
 const connectionStatus = ref('connecting')
@@ -104,24 +163,24 @@ onBeforeUnmount(() => {
   if (socket && socket.readyState === WebSocket.OPEN) {
     socket.close()
   }
-})
+}) */
 
-// socket.onopen = function (event) {
-//   document.getElementById('output').value += 'Connected\n'
-// }
+/* socket.onopen = function (event) {
+  document.getElementById('output').value += 'Connected\n'
+}
 
-// socket.onmessage = function (event) {
-//   document.getElementById('output').value += 'Received: ' + event.data + '\n'
-// }
+socket.onmessage = function (event) {
+  document.getElementById('output').value += 'Received: ' + event.data + '\n'
+}
 
-// socket.onclose = function (event) {
-//   document.getElementById('output').value += 'Connection closed\n'
-// }
+socket.onclose = function (event) {
+  document.getElementById('output').value += 'Connection closed\n'
+}
 
-// const sendMessage = () => {
-//   const message = document.getElementById('input').value
-//   socket.send(message)
-// }
+const sendMessage = () => {
+  const message = document.getElementById('input').value
+  socket.send(message)
+} */
 </script>
 
 <style scoped>
