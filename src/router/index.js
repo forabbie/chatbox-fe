@@ -20,18 +20,10 @@ const routes = [
   //   meta: { layout: 'app', requiresAuth: true }
   // },
   // {
-  //   name: 'channel',
-  //   path: '/channel/:id',
-  //   component: () => import('@/views/ChannelView.vue'),
-  //   meta: { layout: 'app', requiresAuth: true }
-  // },
-  // {
-  //   path: '/channel',
-  //   redirect: () => {
-  //     const store = useChannelsStore()
-  //     const firstChannel = store.channels?.[0]
-  //     return firstChannel ? `/channel/${firstChannel.id}` : '/no-channels'
-  //   }
+  //   name: 'chat',
+  //   path: '/chat',
+  //   component: () => import('@/views/TestChatView.vue'),
+  //   meta: { layout: 'auth' }
   // },
   {
     path: '/channel',
