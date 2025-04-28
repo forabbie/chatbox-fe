@@ -1,24 +1,25 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { listChannelService } from '@/services/channel.service'
+import { listChannelService, getChannelService } from '@/services/channel.service'
 
-export const useChannelsStore = defineStore('channels', () => {
+export const useChannelStore = defineStore('channels', () => {
   const channels = ref([])
-  const activeChannel = ref(null)
-
-  const setActiveChannel = (channel) => {
-    activeChannel.value = channel
-  }
+  const channel = ref({})
 
   const setChannels = async () => {
     const data = await listChannelService()
     channels.value = data.response
   }
 
+  const setChannelDetails = async (channelId) => {
+    const data = await getChannelService(channelId)
+    channel.value = data.response
+  }
+
   return {
     channels,
-    activeChannel,
-    setActiveChannel,
-    setChannels
+    setChannels,
+    channel,
+    setChannelDetails
   }
 })

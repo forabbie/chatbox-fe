@@ -99,10 +99,10 @@ import UserFunctions from '@/components/users/user'
 import ChannelFunctions from '@/components/channels/channel'
 
 import { useRouter } from 'vue-router'
-import { useChannelsStore } from '@/stores/channel.store'
+import { useChannelStore } from '@/stores/channel.store'
 
 const router = useRouter()
-const channelStore = useChannelsStore()
+const channelStore = useChannelStore()
 
 const { listUsers } = UserFunctions()
 const { postChannel } = ChannelFunctions()

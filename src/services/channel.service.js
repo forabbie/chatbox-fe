@@ -19,3 +19,13 @@ export const postChannelService = async (channelData) => {
     throw error
   }
 }
+
+export const getChannelService = async (channelId) => {
+  try {
+    axiosInstance.defaults.headers['Content-Type'] = 'application/json'
+    const response = await axiosInstance.get(`/channel/${channelId}`)
+    return response.data
+  } catch (error) {
+    throw error
+  }
+}

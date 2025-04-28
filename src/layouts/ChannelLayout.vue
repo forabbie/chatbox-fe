@@ -4,39 +4,70 @@
 
 <script setup>
 import { onMounted } from 'vue'
-import { useChannelsStore } from '@/stores/channel.store'
+import { useChannelStore } from '@/stores/channel.store'
+import { useMessageStore } from '@/stores/message.store'
 
 import { useRouter, useRoute } from 'vue-router'
 
 const route = useRoute()
 const router = useRouter()
-const store = useChannelsStore()
+const channelStore = useChannelStore()
+const messageStore = useMessageStore()
 
 onMounted(async () => {
-  if (store.channels && !store.channels.length) {
-    try {
-      await store.setChannels()
-      // console.log('ChannelLayout mounted', store.channels)
-    } catch (error) {
-      console.error('Error loading channels:', error)
+  try {
+    if (!channelStore.channels?.length) {
+      await channelStore.setChannels()
     }
+    const channelId = route.params.id
+
+    await validateAndRedirect(channelId)
+
+    if (channelId) {
+      await loadChannelDetails(channelId)
+    }
+  } catch (error) {
+    console.error('Error initializing channels:', error)
+    router.replace({ name: 'no-channels' })
   }
-  validateAndRedirect()
 })
 
-const validateAndRedirect = () => {
-  const channelId = route.params.id
-  const channels = store.channels || [] // fallback early
+const validateAndRedirect = async (channelId) => {
+  channelId = String(channelId || '')
 
+  const channels = channelStore.channels || []
   const validIds = channels.map((c) => String(c.id))
 
   if (!channelId || !validIds.includes(channelId)) {
     const firstChannel = channels[0]
-    if (firstChannel) {
-      router.replace({ name: 'channel', params: { id: firstChannel.id } })
-    } else {
-      router.replace({ name: 'no-channels' })
-    }
+    router.replace(
+      firstChannel ? { name: 'channel', params: { id: firstChannel.id } } : { name: 'no-channels' }
+    )
+  }
+}
+
+const loadChannelDetails = async (channelId) => {
+  const channels = channelStore.channels || []
+  const channel = channels.find((c) => String(c.id) === String(channelId))
+  const messagesquery = {
+    receiver_id: channelId,
+    receiver_class: 'channel',
+    sort: 'sent_at,asc',
+    page: 1,
+    limit: 50
+  }
+  if (!channel) {
+    console.error('Channel not found:', channelId)
+    return
+  }
+
+  try {
+    await Promise.all([
+      channelStore.setChannelDetails(channelId),
+      messageStore.setMessages(messagesquery)
+    ])
+  } catch (error) {
+    console.error('Error loading channel details:', error)
   }
 }
 </script>

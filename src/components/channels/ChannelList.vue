@@ -1,7 +1,7 @@
 <template>
-  <div class="">
-    <div class="flex items-center justify-between px-8 py-4">
-      <h2 class="text-start text-xl font-bold">Channels</h2>
+  <div class="flex h-full flex-col">
+    <div class="sticky top-0 z-10 flex items-center justify-between px-8 py-4">
+      <h2 class="text-start text-xl font-bold text-white">Channels</h2>
       <Button
         icon="pi pi-pen-to-square"
         aria-label="Create Channel"
@@ -9,7 +9,7 @@
         pt:root="btn"
       />
     </div>
-    <ul v-if="channels && channels.length" class="p-4">
+    <ul v-if="channels && channels.length" class="h-full overflow-auto p-4">
       <li>
         <router-link
           v-for="channel in channels"
@@ -23,7 +23,7 @@
               <div class="relative mr-2">
                 <i :class="['pi pi-hashtag']"></i>
               </div>
-              <span :class="['text-sm']">{{ channel.name }}</span>
+              <span :class="['text-sm']">{{ channel.name }} </span>
             </div>
           </div>
         </router-link>
@@ -39,9 +39,9 @@
 import Button from 'primevue/button'
 
 import { computed } from 'vue'
-import { useChannelsStore } from '@/stores/channel.store'
+import { useChannelStore } from '@/stores/channel.store'
 
-const channelStore = useChannelsStore()
+const channelStore = useChannelStore()
 
 const channels = computed(() => {
   return channelStore.channels
