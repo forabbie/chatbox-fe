@@ -34,6 +34,6 @@ defineProps({
 
 <style scoped>
 .p-divider {
-  @apply m-0 p-0 before:border-fuchsia-950;
+  @apply m-0 p-0 before:border-slate-700;
 }
 </style>

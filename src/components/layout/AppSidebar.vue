@@ -7,7 +7,6 @@
           <div class="logo-wrapper">
             <img src="/images/logo.svg" alt="Company Logo" class="logo" height="24" width="24" />
           </div>
-          <BaseDivider />
         </section>
 
         <!-- Navigation -->
@@ -42,13 +41,12 @@
       </div>
     </div>
     <!-- Vertical Divider -->
-    <BaseDivider layout="vertical" />
+    <!-- <BaseDivider layout="vertical" /> -->
   </aside>
 </template>
 
 <script setup>
 import Button from 'primevue/button'
-import BaseDivider from '@/components/common/BaseDivider.vue'
 import IconHome from '@/components/icons/IconHome.vue'
 import IconMessage from '@/components/icons/IconMessage.vue'
 
@@ -57,10 +55,10 @@ import router from '@/router'
 import { computed, markRaw } from 'vue'
 import { useRoute } from 'vue-router'
 
-import { useChannelsStore } from '@/stores/channel.store'
+import { useChannelStore } from '@/stores/channel.store'
 import { useAuthStore } from '@/stores/auth.store.js'
 
-const channelStore = useChannelsStore()
+const channelStore = useChannelStore()
 const authStore = useAuthStore()
 
 const route = useRoute()

@@ -1,9 +1,9 @@
 <template>
-  <div class="grid h-full w-full grid-cols-12 gap-4 text-white">
-    <aside class="col-span-4 bg-fuchsia-950/60">
-      <ChannelList @open-dialog="openNew" />
+  <div class="grid h-full w-full grid-cols-12 text-white/80">
+    <aside class="col-span-4 overflow-hidden rounded-tl-lg bg-gray-950">
+      <ChannelList @open-dialog="openNew" class="bg-fuchsia-950/50" />
     </aside>
-    <main class="col-span-6">
+    <main class="col-span-8 overflow-hidden">
       <ChannelMessages />
     </main>
   </div>
