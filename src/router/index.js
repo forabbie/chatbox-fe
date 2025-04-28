@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-// import { useChannelsStore } from '@/stores/channel.store'
 import authRoutes from './routes/auth'
 import workspaceRoutes from './routes/workspace'
 // import settingsRoutes from "./routes/settings";
