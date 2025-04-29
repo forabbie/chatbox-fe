@@ -1,4 +1,5 @@
 <template>
+  <Toast pt:root="custom-toast" />
   <div class="chat-box-inner flex h-full flex-col">
     <div
       class="chat-meta-user chat-active sticky top-0 z-10 flex items-center justify-between border-b border-gray-700 p-3"
@@ -27,7 +28,7 @@
           />
           <Menu ref="menu" id="overlay_menu" :model="items" :popup="true">
             <template #item="{ item }">
-              <a v-ripple class="flex items-center px-3">
+              <a class="flex items-center px-3">
                 <span class="text-red-600">{{ item.label }}</span>
               </a>
             </template>
@@ -73,9 +74,32 @@
     </div>
     <div class="chat-footer p-3">
       <div class="chat-input">
-        <vee-form class="chat-form flex">
-          <InputText type="text" :placeholder="`Message # ${channel.name}`" class="w-full" />
-          <Button label="Send" icon="pi pi-send" iconPos="left" class="ms-2" />
+        <vee-form ref="refmessageform" :validation-schema="schema" class="chat-form flex">
+          <vee-field name="cmessage" v-slot="{ handleChange }" :bails="false">
+            <InputText
+              :modelValue="message"
+              @update:modelValue="
+                (val) => {
+                  message = val
+                  handleChange(val)
+                }
+              "
+              id="cmessage"
+              type="text"
+              :placeholder="`Message # ${channel.name}`"
+              class="w-full"
+            />
+          </vee-field>
+          <Button
+            type="submit"
+            :disabled="!message || isSubmitted"
+            @click.prevent="onPostMessage()"
+            class="ms-2"
+          >
+            <i v-if="!isSubmitted" class="pi pi-send"></i>
+            <span v-else class="pi pi-spin pi-spinner"></span>
+            <span>Send</span>
+          </Button>
         </vee-form>
       </div>
     </div>
@@ -83,19 +107,55 @@
 </template>
 
 <script setup>
+import { computed, ref, onMounted, onUnmounted } from 'vue'
+
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import Menu from 'primevue/menu'
 import Avatar from 'primevue/avatar'
 import AvatarGroup from 'primevue/avatargroup'
 import Divider from 'primevue/divider'
+import Toast from 'primevue/toast'
 
+import { useToast } from 'primevue/usetoast'
+import { useWebSocket } from '@/composables/useWebSocket'
 import { useChannelStore } from '@/stores/channel.store'
 import { useMessageStore } from '@/stores/message.store'
-import { computed, ref } from 'vue'
+
+import ChannelFunctions from '@/components/channels/channel'
+
+const toast = useToast()
 
 const channelStore = useChannelStore()
 const messageStore = useMessageStore()
+
+const { postMessage } = ChannelFunctions()
+const { initWebSocket, sendMessage, closeWebSocket } = useWebSocket()
+
+onMounted(() => {
+  initWebSocket({
+    baseWsUrl: import.meta.env.VITE_WBS_BASE_URL + `/chat/${channel.value.id}`,
+    onErrorCallback: (error) => {
+      console.error('WebSocket Error:', error)
+      toast.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'WebSocket connection error.',
+        life: 3000
+      })
+    },
+    onMessageCallback: (data) => {
+      // console.log('WebSocket Message:', data)
+      if (data.id == channel.value.id) {
+        loadMessages()
+      }
+    }
+  })
+})
+
+onUnmounted(() => {
+  closeWebSocket()
+})
 
 const channel = computed(() => {
   return channelStore.channel
@@ -114,6 +174,61 @@ const items = ref([
 
 const toggle = (event) => {
   menu.value.toggle(event)
+}
+
+const refmessageform = ref(null)
+const isSubmitted = ref(false)
+const message = ref('')
+
+const schema = {
+  cmessage: 'required'
+}
+
+const onPostMessage = async () => {
+  isSubmitted.value = true
+
+  const { valid } = await refmessageform.value.validate()
+  if (!valid) return
+
+  const request = {
+    receiver_id: channel.value.id,
+    receiver_class: 'channel',
+    message: message.value
+  }
+
+  try {
+    await postMessage(request)
+    const msg = { class: 'channel', id: channel.value.id }
+    sendMessage(msg)
+
+    message.value = ''
+  } catch (error) {
+    console.error('Error sending message:', error)
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Failed to send message.',
+      life: 3000
+    })
+  } finally {
+    isSubmitted.value = false
+  }
+}
+
+const loadMessages = async () => {
+  const messagesquery = {
+    receiver_id: channel.value.id,
+    receiver_class: 'channel',
+    sort: 'sent_at,asc',
+    page: 1,
+    limit: 50
+  }
+
+  try {
+    await messageStore.setMessages(messagesquery)
+  } catch (error) {
+    console.error('Error loading messages:', error)
+  }
 }
 
 function shouldShowAvatar(index) {

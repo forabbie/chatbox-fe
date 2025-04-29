@@ -45,7 +45,12 @@ export const useWebSocket = () => {
     return `${baseWsUrl}?${queryParams.toString()}`
   }
 
-  const initWebSocket = async ({ baseWsUrl, params = {}, onMessageCallback } = {}) => {
+  const initWebSocket = async ({
+    baseWsUrl,
+    params = {},
+    onMessageCallback,
+    onErrorCallback
+  } = {}) => {
     if (!window.WebSocket) {
       console.warn('WebSocket is not supported by your browser.')
       return
@@ -84,6 +89,7 @@ export const useWebSocket = () => {
       socket.value.onerror = (error) => {
         console.error('WebSocket encountered an error:', error)
         socket.value?.close()
+        onErrorCallback(error)
       }
     } catch (error) {
       console.error('Failed to initialize WebSocket:', error)

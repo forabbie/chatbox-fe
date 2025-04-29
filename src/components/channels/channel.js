@@ -1,7 +1,5 @@
 import { postChannelService } from '@/services/channel.service'
-// import { useAuthStore } from '@/stores/channel.store'
-
-// const authStore = useAuthStore()
+import { postMessageService } from '@/services/message.service'
 
 const ChannelFunctions = () => {
   const postChannel = async (channelData) => {
@@ -13,8 +11,18 @@ const ChannelFunctions = () => {
     }
   }
 
+  const postMessage = async (requestDetails) => {
+    try {
+      const data = await postMessageService(requestDetails)
+      return data.response
+    } catch (err) {
+      throw err
+    }
+  }
+
   return {
-    postChannel
+    postChannel,
+    postMessage
   }
 }
 

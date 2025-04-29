@@ -8,3 +8,13 @@ export const listMessageService = async (query) => {
     throw error
   }
 }
+
+export const postMessageService = async (requestDetails) => {
+  try {
+    axiosInstance.defaults.headers['Content-Type'] = 'application/json'
+    const response = await axiosInstance.post(`/message`, requestDetails)
+    return response.data
+  } catch (error) {
+    throw error
+  }
+}
