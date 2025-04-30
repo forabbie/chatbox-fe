@@ -29,3 +29,23 @@ export const getChannelService = async (channelId) => {
     throw error
   }
 }
+
+// export const leaveChannelService = async (channelId) => {
+//   try {
+//     axiosInstance.defaults.headers['Content-Type'] = 'application/json'
+//     const response = await axiosInstance.post(`/channel/leave`, channelId)
+//     return response.data
+//   } catch (error) {
+//     throw error
+//   }
+// }
+
+export const postChannelMemberService = async (requestDetails) => {
+  try {
+    axiosInstance.defaults.headers['Content-Type'] = 'application/json'
+    const response = await axiosInstance.post(`/channel/add_member`, requestDetails)
+    return response.data
+  } catch (error) {
+    throw error
+  }
+}

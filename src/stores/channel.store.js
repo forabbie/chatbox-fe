@@ -5,6 +5,7 @@ import { listChannelService, getChannelService } from '@/services/channel.servic
 export const useChannelStore = defineStore('channels', () => {
   const channels = ref([])
   const channel = ref({})
+  const members = ref({})
 
   const setChannels = async () => {
     const data = await listChannelService()
@@ -16,10 +17,16 @@ export const useChannelStore = defineStore('channels', () => {
     channel.value = data.response
   }
 
+  const setChannelMembers = async (list) => {
+    members.value = list
+  }
+
   return {
     channels,
     setChannels,
     channel,
-    setChannelDetails
+    setChannelDetails,
+    members,
+    setChannelMembers
   }
 })

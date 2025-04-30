@@ -1,4 +1,8 @@
-import { postChannelService } from '@/services/channel.service'
+import {
+  postChannelService,
+  // leaveChannelService,
+  postChannelMemberService
+} from '@/services/channel.service'
 import { postMessageService } from '@/services/message.service'
 
 const ChannelFunctions = () => {
@@ -20,9 +24,29 @@ const ChannelFunctions = () => {
     }
   }
 
+  // const leaveChannel = async (requestDetails) => {
+  //   try {
+  //     const data = await leaveChannelService(requestDetails)
+  //     return data.response
+  //   } catch (err) {
+  //     throw err
+  //   }
+  // }
+
+  const postChannelMember = async (requestDetails) => {
+    try {
+      const data = await postChannelMemberService(requestDetails)
+      return data.response
+    } catch (err) {
+      throw err
+    }
+  }
+
   return {
     postChannel,
-    postMessage
+    postMessage,
+    // leaveChannel,
+    postChannelMember
   }
 }
 
