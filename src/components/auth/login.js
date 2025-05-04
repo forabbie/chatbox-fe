@@ -9,9 +9,8 @@ const LoginFunctions = () => {
       const data = await loginService(credentials)
       authStore.setTokens(data.response)
       authStore.toggleAuthentication(true)
-    } catch (err) {
-      console.error(err)
-      throw new Error('Login failed')
+    } catch (error) {
+      throw error
     }
   }
 
