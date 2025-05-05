@@ -1,0 +1,331 @@
+<template>
+  <div class="h-full">
+    <Toast pt:root="custom-toast" />
+    <div class="chat-box-inner flex h-full flex-col">
+      <div
+        class="chat-meta-user chat-active sticky top-0 z-10 flex items-center justify-between border-b border-gray-700 p-3"
+      >
+        <div class="current-chat-user-name flex items-center gap-2">
+          <Avatar
+            icon="pi pi-user"
+            size="small"
+            style="background-color: #f9fce9; color: #1e293b"
+            customClass="bg-red-500 text-white"
+          />
+          <span class="text-start text-xl text-white/90">{{ user.receiver_name }}</span>
+        </div>
+      </div>
+      <div class="chat-conversation-box flex-grow overflow-auto">
+        <div class="chat">
+          <div v-for="(res, index) in messages" :key="res.id" class="group-wrapper">
+            <div class="px-2">
+              <Divider
+                v-if="shouldShowDateDivider(index)"
+                align="center"
+                type="solid"
+                pt:root="custom-divider"
+                pt:content="custom-divider-content"
+              >
+                <span class="text-sm">{{ formatDate(res.sent_at) }}</span>
+              </Divider>
+            </div>
+
+            <div
+              class="bubble flex items-center justify-start gap-2 px-3 py-1 hover:bg-gray-800/60"
+              :class="{ 'mt-6': shouldShowAvatar(index) }"
+              @mouseenter="handleMouseEnter(index)"
+              @mouseleave="handleMouseLeave"
+            >
+              <div class="bubble-avatar flex w-10 items-baseline justify-center">
+                <Avatar
+                  v-if="shouldShowAvatar(index)"
+                  icon="pi pi-user"
+                  size="small"
+                  :label="getInitial(res.sender.username)"
+                  style="background-color: #f9fce9; color: #1e293b"
+                  customClass="bg-red-500 text-white"
+                />
+                <span
+                  v-else
+                  :class="[
+                    'text-[8px] text-slate-400 transition-opacity',
+                    hoveredIndex === index ? 'opacity-100' : 'opacity-0'
+                  ]"
+                >
+                  {{ formatTime(res.sent_at) }}
+                </span>
+              </div>
+
+              <div class="bubble-content">
+                <div v-if="shouldShowAvatar(index)" class="bubble-sender flex items-baseline gap-2">
+                  <div class="username text-sm font-semibold">{{ res.sender.username }}</div>
+                  <div class="time text-xs text-gray-400">
+                    {{ formatTime(res.sent_at) }}
+                  </div>
+                </div>
+
+                <div class="bubble-text text-sm">
+                  <p>{{ res.message }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="chat-footer p-3">
+        <div class="chat-input">
+          <vee-form ref="refmessageform" :validation-schema="schema" class="chat-form flex">
+            <vee-field name="cmessage" v-slot="{ handleChange }" :bails="false">
+              <InputText
+                :modelValue="message"
+                @update:modelValue="
+                  (val) => {
+                    message = val
+                    handleChange(val)
+                  }
+                "
+                id="cmessage"
+                type="text"
+                :placeholder="`Message @${user.receiver_name}`"
+                class="w-full"
+              />
+            </vee-field>
+            <Button
+              type="submit"
+              :disabled="!message || isSubmitted"
+              @click.prevent="onPostMessage()"
+              class="ms-2"
+            >
+              <i v-if="!isSubmitted" class="pi pi-send"></i>
+              <span v-else class="pi pi-spin pi-spinner"></span>
+              <span>Send</span>
+            </Button>
+          </vee-form>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { computed, ref, onMounted, onUnmounted } from 'vue'
+
+import InputText from 'primevue/inputtext'
+import Button from 'primevue/button'
+import Avatar from 'primevue/avatar'
+import Divider from 'primevue/divider'
+import Toast from 'primevue/toast'
+
+import { useToast } from 'primevue/usetoast'
+import { useWebSocket } from '@/composables/useWebSocket'
+import { useUserStore } from '@/stores/user.store'
+import { useMessageStore } from '@/stores/message.store'
+
+import { formatDate, formatTime } from '@/utils/date'
+
+import ChannelFunctions from '@/components/channels/channel'
+
+const toast = useToast()
+
+const userStore = useUserStore()
+const messageStore = useMessageStore()
+
+const { postMessage } = ChannelFunctions()
+const { initWebSocket, sendMessage, closeWebSocket } = useWebSocket()
+
+onMounted(() => {
+  initWebSocket({
+    baseWsUrl: import.meta.env.VITE_WBS_BASE_URL + `/chat/${user.value.id}`,
+    onErrorCallback: (error) => {
+      console.error('WebSocket Error:', error)
+      toast.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'WebSocket connection error.',
+        life: 3000
+      })
+    },
+    onMessageCallback: (data) => {
+      // console.log('WebSocket Message:', data)
+      if (data.id == user.value.id) {
+        loadMessages()
+      }
+    }
+  })
+})
+
+onUnmounted(() => {
+  closeWebSocket()
+})
+
+const user = computed(() => {
+  // return userStore.user
+  if (!userStore.user) {
+    return null
+  }
+  const receiver = userStore.user
+  return {
+    ...userStore.user,
+    receiver_email: receiver?.emailaddress || 'Unknown',
+    receiver_name:
+      receiver?.firstname && receiver?.lastname
+        ? `${receiver.firstname} ${receiver.lastname}`
+        : receiver?.emailaddress || 'No name'
+  }
+})
+
+const messages = computed(() => {
+  return messageStore.messages
+})
+
+const refmessageform = ref(null)
+const isSubmitted = ref(false)
+const message = ref('')
+
+const schema = {
+  cmessage: 'required'
+}
+
+const onPostMessage = async () => {
+  isSubmitted.value = true
+
+  const { valid } = await refmessageform.value.validate()
+  if (!valid) return
+
+  const request = {
+    receiver_id: user.value.id,
+    receiver_class: 'user',
+    message: message.value
+  }
+
+  try {
+    await postMessage(request)
+    const msg = { class: 'user', id: user.value.id }
+    sendMessage(msg)
+
+    message.value = ''
+  } catch (error) {
+    console.error('Error sending message:', error)
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Failed to send message.',
+      life: 3000
+    })
+  } finally {
+    isSubmitted.value = false
+  }
+}
+
+const loadMessages = async () => {
+  const messagesquery = {
+    receiver_id: user.value.id,
+    receiver_class: 'user',
+    sort: 'sent_at,asc',
+    page: 1,
+    limit: 50
+  }
+
+  try {
+    await messageStore.setMessages(messagesquery)
+  } catch (error) {
+    console.error('Error loading messages:', error)
+  }
+}
+
+function shouldShowAvatar(index) {
+  if (index === 0) return true
+
+  const current = messages.value[index]
+  const previous = messages.value[index - 1]
+
+  const currentSenderId = current?.sender.id
+  const previousSenderId = previous?.sender.id
+
+  const currentTime = new Date(current?.sent_at).getTime()
+  const previousTime = new Date(previous?.sent_at).getTime()
+
+  const timeDiffMinutes = (currentTime - previousTime) / (1000 * 60) // in minutes
+
+  return currentSenderId !== previousSenderId || timeDiffMinutes >= 10
+}
+
+function shouldShowDateDivider(index) {
+  if (index === 0) return true
+
+  const current = messages.value[index]
+  const previous = messages.value[index - 1]
+
+  const currentDate = new Date(current?.sent_at)
+  const previousDate = new Date(previous?.sent_at)
+
+  const currentDay = currentDate.toDateString()
+  const previousDay = previousDate.toDateString()
+
+  if (currentDay !== previousDay) {
+    return true // different day
+  }
+
+  const now = new Date()
+  const isToday = now.toDateString() === currentDay
+
+  if (isToday) {
+    const timeDiffHours = (currentDate.getTime() - previousDate.getTime()) / (1000 * 60 * 60) // in hours
+    return timeDiffHours >= 4
+  }
+
+  return false
+}
+
+function getInitial(email) {
+  if (!email) return '?'
+
+  const trimmedEmail = email.trim()
+  const username = trimmedEmail.split('@')[0]
+
+  if (username.length === 1) {
+    return username.charAt(0).toUpperCase()
+  }
+
+  const firstLetter = username.charAt(0).toUpperCase()
+  const lastLetter = username.charAt(username.length - 1).toUpperCase()
+
+  return firstLetter + lastLetter
+}
+const hoveredIndex = ref(null)
+
+function handleMouseEnter(idx) {
+  hoveredIndex.value = idx
+}
+
+function handleMouseLeave() {
+  hoveredIndex.value = null
+}
+</script>
+
+<style scoped>
+.btn.p-button {
+  width: auto;
+  height: auto;
+  padding: 0;
+  background-color: transparent;
+  border: 1px solid transparent;
+  color: rgba(255, 255, 255, 0.8);
+}
+.btn.p-button:hover {
+  @apply text-white;
+  padding: 0;
+  background-color: transparent;
+  border: 1px solid transparent;
+}
+</style>
+
+<style>
+.p-divider.custom-divider::before {
+  border-block-start: 1px solid #4b5563;
+}
+.p-divider-content.custom-divider-content {
+  --p-divider-content-background: #0f172a;
+  color: #4b5563;
+}
+</style>

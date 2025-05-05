@@ -243,6 +243,8 @@ import { useWebSocket } from '@/composables/useWebSocket'
 import { useChannelStore } from '@/stores/channel.store'
 import { useMessageStore } from '@/stores/message.store'
 
+import { formatDate, formatTime } from '@/utils/date'
+
 import UserFunctions from '@/components/users/user'
 import ChannelFunctions from '@/components/channels/channel'
 
@@ -495,40 +497,6 @@ function shouldShowDateDivider(index) {
   }
 
   return false
-}
-
-function formatDate(sentAt) {
-  const today = new Date()
-  const messageDate = new Date(sentAt)
-
-  const isToday = today.toDateString() === messageDate.toDateString()
-  const yesterday = new Date()
-  yesterday.setDate(today.getDate() - 1)
-  const isYesterday = yesterday.toDateString() === messageDate.toDateString()
-
-  if (isToday) {
-    return `Today, ${messageDate.toLocaleTimeString([], {
-      hour: '2-digit',
-      minute: '2-digit'
-    })}`
-  } else if (isYesterday) {
-    return `Yesterday, ${messageDate.toLocaleDateString(undefined, {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
-    })}`
-  } else {
-    return messageDate.toLocaleDateString(undefined, {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
-    })
-  }
-}
-
-function formatTime(sentAt) {
-  const date = new Date(sentAt)
-  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
 }
 
 function getInitial(email) {

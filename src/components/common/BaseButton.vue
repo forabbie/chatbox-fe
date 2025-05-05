@@ -1,7 +1,7 @@
 <template>
   <Button :class="buttonClasses" :disabled="disabled || inactive" unstyled>
-    <slot></slot>
     <span v-if="loading" class="pi pi-spin pi-spinner"></span>
+    <slot></slot>
   </Button>
 </template>
 
@@ -42,7 +42,7 @@ const buttonClasses = computed(() => {
 
 <style scoped lang="scss">
 .btn {
-  @apply rounded px-4 py-2 text-xs font-semibold transition-colors;
+  @apply flex items-center justify-center gap-2 rounded px-4 py-2 text-xs font-semibold transition-colors;
 
   &--positive {
     @apply bg-primary text-white hover:bg-primary-dark;

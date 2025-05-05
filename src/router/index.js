@@ -45,8 +45,37 @@ const routes = [
   {
     name: 'dms',
     path: '/dms',
-    component: () => import('@/views/DirectMessageView.vue'),
-    meta: { layout: 'app', requiresAuth: true }
+    component: () => import('@/layouts/DmLayout.vue'),
+    meta: { layout: 'app', requiresAuth: true },
+    children: [
+      {
+        path: '',
+        name: 'dm-layout',
+        component: () => import('@/views/dms/DmView.vue'),
+        children: [
+          {
+            path: ':id',
+            name: 'dm',
+            component: () => import('@/components/dms/DmMessages.vue')
+          },
+          {
+            path: 'new',
+            name: 'new-dm',
+            component: () => import('@/components/dms/NewMessage.vue')
+          }
+        ]
+      },
+      // {
+      //   path: 'new',
+      //   name: 'new-dm',
+      //   component: () => import('@/views/dms/NewDirectMessageView.vue')
+      // },
+      {
+        path: 'no-dms',
+        name: 'no-dms',
+        component: () => import('@/views/dms/NoDmsView.vue')
+      }
+    ]
   },
   {
     path: '/pages/error403',
@@ -87,6 +116,7 @@ const router = createRouter({
 
 import { useLayoutStore } from '@/stores/layout.store'
 import { useAuthStore } from '@/stores/auth.store'
+import { useRouteStore } from '@/stores/route.store'
 
 router.beforeResolve(async (to) => {
   const layoutStore = useLayoutStore()
@@ -100,6 +130,8 @@ router.beforeResolve(async (to) => {
 
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore()
+  const routeStore = useRouteStore()
+  routeStore.previousRoute = from
 
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     next({ name: 'auth' })
