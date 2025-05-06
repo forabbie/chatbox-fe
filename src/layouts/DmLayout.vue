@@ -7,6 +7,7 @@ import { onMounted } from 'vue'
 import { useDmStore } from '@/stores/dm.store'
 import { useMessageStore } from '@/stores/message.store'
 import { useUserStore } from '@/stores/user.store'
+import { parseUserIdFromToken } from '@/utils/token'
 
 import { useRouter, useRoute } from 'vue-router'
 
@@ -51,9 +52,14 @@ const validateAndRedirect = async (dmId) => {
 const loadDmDetails = async (dmId) => {
   const dms = dmStore.dms || []
   const dm = dms.find((c) => String(c.id) === String(dmId))
+  const userId = parseUserIdFromToken()
+  let receiverId = dm?.receiver_id
+  if (userId === dm.receiver_id) {
+    receiverId = dm.sender_id
+  }
 
   const messagesquery = {
-    receiver_id: dm.receiver_id,
+    receiver_id: receiverId,
     receiver_class: 'user',
     sort: 'sent_at,asc',
     page: 1,
@@ -68,7 +74,7 @@ const loadDmDetails = async (dmId) => {
   try {
     await Promise.all([
       loadUsers(),
-      userStore.setUser(dm.receiver_id),
+      userStore.setReceiver(receiverId),
       messageStore.setMessages(messagesquery)
     ])
   } catch (error) {

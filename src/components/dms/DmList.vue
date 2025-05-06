@@ -63,6 +63,7 @@ import { useUserStore } from '@/stores/user.store'
 
 import { formatDateTime } from '@/utils/date'
 import { getInitial } from '@/utils/helper'
+import { parseUserIdFromToken } from '@/utils/token'
 
 const dmStore = useDmStore()
 const userStore = useUserStore()
@@ -82,9 +83,13 @@ const enrichedDms = computed(() => {
   if (!dms.value || !users.value) {
     return null
   }
-
+  const userId = parseUserIdFromToken()
   return dms.value.map((dm) => {
-    const receiver = userMap.value[dm.receiver_id]
+    let receiverId = dm?.receiver_id
+    if (userId === dm.receiver_id) {
+      receiverId = dm.sender_id
+    }
+    const receiver = userMap.value[receiverId]
     return {
       ...dm,
       receiver_email: receiver?.emailaddress || 'Unknown',

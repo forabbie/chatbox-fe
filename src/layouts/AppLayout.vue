@@ -23,14 +23,30 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useLayoutStore } from '@/stores/layout.store'
+import { useUserStore } from '@/stores/user.store'
+import { parseUserIdFromToken } from '@/utils/token'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import AppSidebar from '@/components/layout/AppSidebar.vue'
 import AppFooter from '@/components/layout/AppFooter.vue'
 
+const userStore = useUserStore()
 const layoutStore = useLayoutStore()
 const isSidebarAnchored = computed(() => layoutStore.isSidebarAnchored)
+
+onMounted(async () => {
+  const userId = parseUserIdFromToken()
+  await loadUser(userId)
+})
+
+const loadUser = async (userId) => {
+  try {
+    await userStore.setUser(userId)
+  } catch (error) {
+    console.error('Error loading user details:', error)
+  }
+}
 </script>
 
 <style scoped>

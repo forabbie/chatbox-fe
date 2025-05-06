@@ -12,12 +12,12 @@
             style="background-color: #f9fce9; color: #1e293b"
             customClass="bg-red-500 text-white"
           />
-          <span class="text-start text-xl text-white/90">{{ user.receiver_name }}</span>
+          <span class="text-start text-xl text-white/90">{{ receiver.receiver_name }}</span>
         </div>
       </div>
       <div class="chat-conversation-box flex-grow overflow-auto">
         <div class="chat">
-          <div v-for="(res, index) in messages" :key="res.id" class="group-wrapper">
+          <div v-for="(message, index) in messages" :key="message.id" class="group-wrapper">
             <div class="px-2">
               <Divider
                 v-if="shouldShowDateDivider(index)"
@@ -26,7 +26,7 @@
                 pt:root="custom-divider"
                 pt:content="custom-divider-content"
               >
-                <span class="text-sm">{{ formatDate(res.sent_at) }}</span>
+                <span class="text-sm">{{ formatDate(message.sent_at) }}</span>
               </Divider>
             </div>
 
@@ -41,7 +41,7 @@
                   v-if="shouldShowAvatar(index)"
                   icon="pi pi-user"
                   size="small"
-                  :label="getInitial(res.sender.username)"
+                  :label="getInitial(message.sender.username)"
                   style="background-color: #f9fce9; color: #1e293b"
                   customClass="bg-red-500 text-white"
                 />
@@ -52,20 +52,20 @@
                     hoveredIndex === index ? 'opacity-100' : 'opacity-0'
                   ]"
                 >
-                  {{ formatTime(res.sent_at) }}
+                  {{ formatTime(message.sent_at) }}
                 </span>
               </div>
 
               <div class="bubble-content">
                 <div v-if="shouldShowAvatar(index)" class="bubble-sender flex items-baseline gap-2">
-                  <div class="username text-sm font-semibold">{{ res.sender.username }}</div>
+                  <div class="username text-sm font-semibold">{{ message.sender.username }}</div>
                   <div class="time text-xs text-gray-400">
-                    {{ formatTime(res.sent_at) }}
+                    {{ formatTime(message.sent_at) }}
                   </div>
                 </div>
 
                 <div class="bubble-text text-sm">
-                  <p>{{ res.message }}</p>
+                  <p>{{ message.message }}</p>
                 </div>
               </div>
             </div>
@@ -86,7 +86,7 @@
                 "
                 id="cmessage"
                 type="text"
-                :placeholder="`Message @${user.receiver_name}`"
+                placeholder="Jot something down"
                 class="w-full"
               />
             </vee-field>
@@ -135,7 +135,7 @@ const { initWebSocket, sendMessage, closeWebSocket } = useWebSocket()
 
 onMounted(() => {
   initWebSocket({
-    baseWsUrl: import.meta.env.VITE_WBS_BASE_URL + `/chat/${user.value.id}`,
+    baseWsUrl: import.meta.env.VITE_WBS_BASE_URL + `/chat/${receiver.value.id}`,
     onErrorCallback: (error) => {
       console.error('WebSocket Error:', error)
       toast.add({
@@ -158,15 +158,14 @@ onUnmounted(() => {
   closeWebSocket()
 })
 
-const user = computed(() => {
-  // return userStore.user
-  if (!userStore.user) {
+const receiver = computed(() => {
+  if (!userStore.receiver) {
     return null
   }
-  const receiver = userStore.user
+  const receiver = userStore.receiver
   return {
-    ...userStore.user,
-    receiver_email: receiver?.emailaddress || 'Unknown',
+    ...userStore.receiver,
+    receiver_emailaddress: receiver?.emailaddress || 'Unknown',
     receiver_name:
       receiver?.firstname && receiver?.lastname
         ? `${receiver.firstname} ${receiver.lastname}`

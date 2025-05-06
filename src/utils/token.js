@@ -1,7 +1,7 @@
 import { getCookie } from './cookies'
 
 export const parseUserIdFromToken = () => {
-  const cookie = getCookie('acp.rfc7519')
+  const cookie = getCookie('cb.rfc7519')
 
   const token = cookie ? cookie : null
 
