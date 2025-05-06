@@ -3,11 +3,12 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { computed, onMounted, onUnmounted } from 'vue'
 import { useDmStore } from '@/stores/dm.store'
 import { useMessageStore } from '@/stores/message.store'
 import { useUserStore } from '@/stores/user.store'
 import { parseUserIdFromToken } from '@/utils/token'
+import { useWebSocket } from '@/composables/useWebSocket'
 
 import { useRouter, useRoute } from 'vue-router'
 
@@ -16,6 +17,16 @@ const route = useRoute()
 const dmStore = useDmStore()
 const userStore = useUserStore()
 const messageStore = useMessageStore()
+
+const { initWebSocket, closeWebSocket } = useWebSocket()
+
+const user = computed(() => {
+  return userStore.user
+})
+
+const receiver = computed(() => {
+  return userStore.receiver
+})
 
 onMounted(async () => {
   try {
@@ -34,6 +45,27 @@ onMounted(async () => {
     console.error('Error initializing dms:', error)
     router.replace({ name: 'no-dms' })
   }
+
+  initWebSocket({
+    baseWsUrl: import.meta.env.VITE_WBS_BASE_URL + `/chat/${receiver.value.id}`,
+    onErrorCallback: (error) => {
+      console.error('WebSocket Error:', error)
+    },
+    onMessageCallback: async (data) => {
+      if (data.id == receiver.value.id || data.id == user.value.id) {
+        console.log('layout')
+
+        // await dmStore.setDms()
+        // const dms = dmStore.dms || []
+        // const dm = dms.find((c) => String(c.receiver_id) === String(receiver.value.id))
+        // router.replace({ name: 'dm', params: { id: dm.id } })
+      }
+    }
+  })
+})
+
+onUnmounted(() => {
+  closeWebSocket()
 })
 
 const validateAndRedirect = async (dmId) => {
