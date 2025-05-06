@@ -50,7 +50,7 @@ const validateAndRedirect = async (dmId) => {
 }
 
 const loadDmDetails = async (dmId) => {
-  const dms = dmStore.dms || []
+  const dms = (await dmStore.dms) || []
   const dm = dms.find((c) => String(c.id) === String(dmId))
   const userId = parseUserIdFromToken()
   let receiverId = dm?.receiver_id

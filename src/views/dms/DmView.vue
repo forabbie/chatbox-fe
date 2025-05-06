@@ -19,15 +19,11 @@
 <script setup>
 import DmList from '@/components/dms/DmList.vue'
 
-import { useDmStore } from '@/stores/dm.store'
 import { useRouter } from 'vue-router'
 
-const dmStore = useDmStore()
 const router = useRouter()
 
 const toggleNew = async (isOnNewMessage) => {
-  console.log(dmStore.dms)
-
   if (isOnNewMessage) {
     router.replace({ name: 'new-dm' })
   } else {

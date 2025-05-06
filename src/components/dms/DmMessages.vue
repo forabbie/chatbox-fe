@@ -12,7 +12,10 @@
             style="background-color: #f9fce9; color: #1e293b"
             customClass="bg-red-500 text-white"
           />
-          <span class="text-start text-xl text-white/90">{{ receiver.receiver_name }}</span>
+          <div class="flex flex-col">
+            <span class="text-start text-xl text-white/90">{{ receiver.receiver_name }}</span>
+            <span class="text-xs text-gray-600">{{ receiver.emailaddress }}</span>
+          </div>
         </div>
       </div>
       <div class="chat-conversation-box flex-grow overflow-auto">
@@ -147,7 +150,7 @@ onMounted(() => {
     },
     onMessageCallback: (data) => {
       // console.log('WebSocket Message:', data)
-      if (data.id == user.value.id) {
+      if (data.id == receiver.value.id || data.id == user.value.id) {
         loadMessages()
       }
     }
@@ -156,6 +159,10 @@ onMounted(() => {
 
 onUnmounted(() => {
   closeWebSocket()
+})
+
+const user = computed(() => {
+  return userStore.user
 })
 
 const receiver = computed(() => {
@@ -192,14 +199,14 @@ const onPostMessage = async () => {
   if (!valid) return
 
   const request = {
-    receiver_id: user.value.id,
+    receiver_id: receiver.value.id,
     receiver_class: 'user',
     message: message.value
   }
 
   try {
     await postMessage(request)
-    const msg = { class: 'user', id: user.value.id }
+    const msg = { class: 'user', id: receiver.value.id }
     sendMessage(msg)
 
     message.value = ''
@@ -218,7 +225,7 @@ const onPostMessage = async () => {
 
 const loadMessages = async () => {
   const messagesquery = {
-    receiver_id: user.value.id,
+    receiver_id: receiver.value.id,
     receiver_class: 'user',
     sort: 'sent_at,asc',
     page: 1,
