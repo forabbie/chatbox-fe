@@ -4,7 +4,7 @@
       <img src="/images/bg-darkest--wide.webp" alt="bg" class="h-full" />
     </div>
     <div
-      class="z-10 mx-auto my-6 flex max-h-fit items-center rounded-2xl bg-slate-950 bg-opacity-100 p-12 sm:max-h-full sm:w-[30rem] lg:my-0 lg:w-11/12 lg:rounded-none lg:py-6"
+      class="z-10 mx-auto my-6 flex max-h-fit items-center rounded-2xl bg-slate-950 bg-opacity-100 p-12 sm:max-h-full sm:w-[30rem] lg:my-0 lg:w-11/12 lg:rounded-none"
     >
       <div class="mx-auto w-full max-w-[32rem]">
         <div class="mb-8 flex flex-col items-center justify-center text-center">
@@ -14,6 +14,13 @@
             >Already have an account?
             <router-link to="/auth/login" class="text-link ml-2">Sign in</router-link>
           </span>
+        </div>
+        <div
+          class="mb-4 p-4 text-center font-bold text-white"
+          v-if="alert.show"
+          :class="alert.variant"
+        >
+          {{ alert.msg }}
         </div>
         <vee-form ref="registerform" :validation-schema="schema">
           <div class="grid grid-cols-12 gap-4">
@@ -93,9 +100,9 @@
             class="w-full"
             variant="primary"
             type="submit"
-            :disabled="false"
-            :inactive="false"
-            :loading="false"
+            :disabled="isSubmitted"
+            :inactive="isSubmitted"
+            :loading="isSubmitted"
             @click.prevent="handleFormSubmit"
             >Sign In</BaseButton
           >
@@ -138,6 +145,12 @@ const schema = {
   tos: 'tos'
 }
 
+const alert = ref({
+  show: false,
+  variant: 'bg-blue-500',
+  msg: 'Please wait! Your account is being created.'
+})
+
 const registerform = ref(null)
 
 const handleFormSubmit = async () => {
@@ -146,11 +159,16 @@ const handleFormSubmit = async () => {
 
   if (!valid) return
 
-  await register(form.value)
-
-  router.push({ name: 'home' })
-
-  // Proceed with form submission
-  // console.log('Form submitted with values:', values)
+  try {
+    await register(form.value)
+    router.push({ name: 'channels' })
+  } catch (error) {
+    console.error('Error during account registration:', error)
+    alert.value.show = true
+    alert.value.variant = 'bg-red-500'
+    alert.value.msg = 'An unexpected error occurred. Please try again later.'
+  } finally {
+    isSubmitted.value = false
+  }
 }
 </script>

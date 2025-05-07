@@ -84,7 +84,7 @@ const { performLogin } = LoginFunctions()
 const alert = ref({
   show: false,
   variant: 'bg-blue-500',
-  msg: 'Please wait! Your account is being created.'
+  msg: 'Please wait!'
 })
 
 const form = ref({
@@ -135,6 +135,7 @@ const handleFormSubmit = async () => {
     }
   } finally {
     isInSubmission.value = false
+    isSubmitted.value = false
   }
 }
 </script>
