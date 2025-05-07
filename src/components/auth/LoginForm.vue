@@ -111,14 +111,12 @@ const handleFormSubmit = async () => {
     isInSubmission.value = false
     return
   }
-  alert.value.show = true
 
   try {
     await performLogin(form.value)
-    // alert.value.variant = 'bg-green-500'
-    // alert.value.msg = 'Success! Your account has been created.'
     router.push({ name: 'channels' })
   } catch (error) {
+    alert.value.show = true
     console.error('Error during login:', error)
     alert.value.variant = 'bg-red-500'
 
