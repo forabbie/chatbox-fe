@@ -1,5 +1,4 @@
 import { utf8ToB64, b64ToUtf8 } from './hash'
-import { clearAllCookies } from './cookies'
 
 // Sets a key-value pair in localStorage after encoding the value in Base64
 export const setLocalStorage = (key, str) => {
@@ -34,5 +33,4 @@ export const clearAllLocalStorage = () => {
 // Clears all localStorage data and cookies
 export const clearAllStorage = () => {
   clearAllLocalStorage()
-  clearAllCookies()
 }

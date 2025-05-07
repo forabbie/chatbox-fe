@@ -31,7 +31,14 @@
           </ul>
         </nav>
       </div>
-      <div class="mb-4 flex flex-col items-center p-2.5">
+      <div class="mb-4 flex flex-col items-center gap-4 p-2.5">
+        <Avatar
+          icon="pi pi-user"
+          size="small"
+          :label="getInitial(user.username)"
+          style="background-color: #f9fce9; color: #1e293b"
+          customClass="bg-red-500 text-white"
+        />
         <Button
           icon="pi pi-sign-out"
           aria-label="Create Channel"
@@ -49,17 +56,26 @@
 import Button from 'primevue/button'
 import IconHome from '@/components/icons/IconHome.vue'
 import IconMessage from '@/components/icons/IconMessage.vue'
+import Avatar from 'primevue/avatar'
 
 import router from '@/router'
 
 import { computed, markRaw } from 'vue'
 import { useRoute } from 'vue-router'
 
+import { getInitial } from '@/utils/helper'
+
 import { useChannelStore } from '@/stores/channel.store'
 import { useAuthStore } from '@/stores/auth.store.js'
+import { useUserStore } from '@/stores/user.store.js'
 
 const channelStore = useChannelStore()
 const authStore = useAuthStore()
+const userStore = useUserStore()
+
+const user = computed(() => {
+  return userStore.user
+})
 
 const route = useRoute()
 const routes = computed(() => {
@@ -126,5 +142,19 @@ i {
 
 .router-link-active .icon-wrapper {
   @apply bg-slate-100/25 shadow-sm shadow-indigo-400/25;
+}
+.btn.p-button {
+  width: auto;
+  height: auto;
+  padding: 0;
+  background-color: transparent;
+  border: 1px solid transparent;
+  color: rgba(255, 255, 255, 0.8);
+}
+.btn.p-button:hover {
+  @apply text-white;
+  padding: 0;
+  background-color: transparent;
+  border: 1px solid transparent;
 }
 </style>

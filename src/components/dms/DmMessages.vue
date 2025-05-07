@@ -124,6 +124,7 @@ import { useWebSocket } from '@/composables/useWebSocket'
 import { useUserStore } from '@/stores/user.store'
 import { useMessageStore } from '@/stores/message.store'
 
+import { getInitial } from '@/utils/helper'
 import { formatDate, formatTime } from '@/utils/date'
 
 import ChannelFunctions from '@/components/channels/channel'
@@ -283,21 +284,6 @@ function shouldShowDateDivider(index) {
   return false
 }
 
-function getInitial(email) {
-  if (!email) return '?'
-
-  const trimmedEmail = email.trim()
-  const username = trimmedEmail.split('@')[0]
-
-  if (username.length === 1) {
-    return username.charAt(0).toUpperCase()
-  }
-
-  const firstLetter = username.charAt(0).toUpperCase()
-  const lastLetter = username.charAt(username.length - 1).toUpperCase()
-
-  return firstLetter + lastLetter
-}
 const hoveredIndex = ref(null)
 
 function handleMouseEnter(idx) {

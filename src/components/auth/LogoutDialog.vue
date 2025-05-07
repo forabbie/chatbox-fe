@@ -35,13 +35,8 @@ const isVisible = computed({
 const router = useRouter()
 
 const handleClose = async () => {
-  try {
-    await authStore.logoutUser()
-    router.push('/auth/login')
-  } catch (error) {
-    console.error(error)
-  } finally {
-    isVisible.value = false
-  }
+  await authStore.logoutUser()
+  router.push('/auth/login')
+  isVisible.value = false
 }
 </script>

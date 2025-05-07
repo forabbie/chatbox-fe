@@ -70,7 +70,6 @@ axiosInstance.interceptors.response.use(
       // If refresh token is invalid or missing while user is logged in
       if (isLoggedIn && !refreshTokenValid) {
         authStore.toggleSessionExpired(true)
-        authStore.toggleAuthentication(false)
         return Promise.reject(error)
       }
 

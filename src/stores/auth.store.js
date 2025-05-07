@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { setLocalStorage, getLocalStorage } from '@/utils/storage'
+import { setLocalStorage, getLocalStorage, deleteLocalStorage } from '@/utils/storage'
 import { logoutService } from '@/services/auth.service.js'
-import { getCookie, setCookie } from '@/utils/cookies'
+import { getCookie, setCookie, eraseCookie, clearAllCookies } from '@/utils/cookies'
 import { clearAllStorage } from '@/utils/storage'
 
 export const useAuthStore = defineStore('auth', () => {
@@ -20,8 +20,8 @@ export const useAuthStore = defineStore('auth', () => {
   const setTokens = ({ access_token, refresh_token }) => {
     accessToken.value = access_token
     refreshToken.value = refresh_token
-    setCookie('cb.rfc7519', access_token, 50)
-    setCookie('cb.refresh_token', refresh_token, 50)
+    setCookie('cb.rfc7519', access_token, 60)
+    setCookie('cb.refresh_token', refresh_token, 30)
   }
 
   const toggleAuthentication = (value) => {
@@ -37,16 +37,18 @@ export const useAuthStore = defineStore('auth', () => {
     isAuthenticated.value = false
     accessToken.value = null
     refreshToken.value = null
-    setCookie('cb.rfc7519', '', -1)
-    setCookie('cb.refresh_token', '', -1)
-    setLocalStorage('isAuthenticated', false)
+    eraseCookie('cb.rfc7519')
+    eraseCookie('cb.refresh_token')
+    deleteLocalStorage('isAuthenticated')
   }
 
   const logoutUser = async () => {
-    await logoutService()
-    clearAuthState()
     toggleSessionExpired(false)
+    toggleAuthentication(false)
+    clearAuthState()
+    clearAllCookies()
     clearAllStorage()
+    await logoutService()
   }
 
   initAuthState()
