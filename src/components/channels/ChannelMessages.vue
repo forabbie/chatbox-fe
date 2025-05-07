@@ -1,5 +1,4 @@
 <template>
-  <Toast pt:root="custom-toast" />
   <div class="chat-box-inner flex h-full flex-col">
     <div
       class="chat-meta-user chat-active sticky top-0 z-10 flex items-center justify-between border-b border-gray-700 p-3"
@@ -224,7 +223,7 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted, onUnmounted } from 'vue'
+import { computed, ref } from 'vue'
 
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
@@ -232,7 +231,6 @@ import Menu from 'primevue/menu'
 import Avatar from 'primevue/avatar'
 import AvatarGroup from 'primevue/avatargroup'
 import Divider from 'primevue/divider'
-import Toast from 'primevue/toast'
 import Popover from 'primevue/popover'
 import Dialog from 'primevue/dialog'
 import AutoComplete from 'primevue/autocomplete'
@@ -255,32 +253,7 @@ const messageStore = useMessageStore()
 
 const { listUsers } = UserFunctions()
 const { postMessage, postChannelMember } = ChannelFunctions()
-const { initWebSocket, sendMessage, closeWebSocket } = useWebSocket()
-
-onMounted(() => {
-  initWebSocket({
-    baseWsUrl: import.meta.env.VITE_WBS_BASE_URL + `/chat/${channel.value.id}`,
-    onErrorCallback: (error) => {
-      console.error('WebSocket Error:', error)
-      toast.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'WebSocket connection error.',
-        life: 3000
-      })
-    },
-    onMessageCallback: (data) => {
-      // console.log('WebSocket Message:', data)
-      if (data.id == channel.value.id) {
-        loadMessages()
-      }
-    }
-  })
-})
-
-onUnmounted(() => {
-  closeWebSocket()
-})
+const { sendMessage } = useWebSocket()
 
 const channel = computed(() => {
   return channelStore.channel
@@ -349,22 +322,6 @@ const onPostMessage = async () => {
     })
   } finally {
     isSubmitted.value = false
-  }
-}
-
-const loadMessages = async () => {
-  const messagesquery = {
-    receiver_id: channel.value.id,
-    receiver_class: 'channel',
-    sort: 'sent_at,asc',
-    page: 1,
-    limit: 50
-  }
-
-  try {
-    await messageStore.setMessages(messagesquery)
-  } catch (error) {
-    console.error('Error loading messages:', error)
   }
 }
 

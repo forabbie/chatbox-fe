@@ -6,6 +6,7 @@
     <AppSidebar />
     <section class="default-app-layout" :class="{ 'is-anchored-app-layout': !isSidebarAnchored }">
       <header class="sticky top-0 z-10 w-full">
+        <Toast pt:root="custom-toast" />
         <AppHeader />
       </header>
       <main
@@ -27,6 +28,9 @@ import { computed, onMounted } from 'vue'
 import { useLayoutStore } from '@/stores/layout.store'
 import { useUserStore } from '@/stores/user.store'
 import { parseUserIdFromToken } from '@/utils/token'
+
+import Toast from 'primevue/toast'
+
 import AppHeader from '@/components/layout/AppHeader.vue'
 import AppSidebar from '@/components/layout/AppSidebar.vue'
 import AppFooter from '@/components/layout/AppFooter.vue'

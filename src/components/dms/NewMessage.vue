@@ -1,78 +1,74 @@
 <template>
-  <div class="h-full">
-    <Toast pt:root="custom-toast" />
-    <vee-form
-      ref="refmessageform"
-      :validation-schema="schema"
-      class="chat-form chat-box-inner flex h-full flex-col pt-3"
+  <vee-form
+    ref="refmessageform"
+    :validation-schema="schema"
+    class="chat-form chat-box-inner flex h-full flex-col pt-3"
+  >
+    <div class="flex items-center justify-between px-3">
+      <h2 class="text-start text-xl font-bold text-white">New Message</h2>
+      <Button
+        icon="pi pi-times"
+        aria-label="Create Channel"
+        @click="toggleNew(false)"
+        pt:root="btn"
+      />
+    </div>
+    <div
+      class="chat-meta-user chat-active sticky top-0 z-10 flex items-center justify-between border-b border-gray-700 p-3"
     >
-      <div class="flex items-center justify-between px-3">
-        <h2 class="text-start text-xl font-bold text-white">New Message</h2>
-        <Button
-          icon="pi pi-times"
-          aria-label="Create Channel"
-          @click="toggleNew(false)"
-          pt:root="btn"
+      <div class="current-chat-user-name flex w-full items-center">
+        <span class="text-gray-500">To:</span>
+        <AutoComplete
+          ref="autocompleteRef"
+          v-model="receiver"
+          :suggestions="filteredUsers"
+          @complete="search"
+          optionLabel="emailaddress"
+          optionValue="id"
+          placeholder="@somebody"
+          pt:root="custom-autocomplete"
+          pt:pcinputtext:root="custom-inputtext"
         />
       </div>
-      <div
-        class="chat-meta-user chat-active sticky top-0 z-10 flex items-center justify-between border-b border-gray-700 p-3"
+      <div class="chat-action-btn align-self-center flex"></div>
+    </div>
+    <div class="chat-conversation-box h-full flex-grow overflow-auto">
+      <div class="chat"></div>
+    </div>
+    <div class="chat-footer flex p-3">
+      <vee-field name="cmessage" v-slot="{ handleChange }" :bails="false">
+        <InputText
+          :modelValue="message"
+          @update:modelValue="
+            (val) => {
+              message = val
+              handleChange(val)
+            }
+          "
+          id="cmessage"
+          type="text"
+          :placeholder="`Message`"
+          class="w-full"
+        />
+      </vee-field>
+      <Button
+        type="submit"
+        :disabled="!message || isSubmitted"
+        @click.prevent="onPostMessage()"
+        class="ms-2"
       >
-        <div class="current-chat-user-name flex w-full items-center">
-          <span class="text-gray-500">To:</span>
-          <AutoComplete
-            ref="autocompleteRef"
-            v-model="receiver"
-            :suggestions="filteredUsers"
-            @complete="search"
-            optionLabel="emailaddress"
-            optionValue="id"
-            placeholder="@somebody"
-            pt:root="custom-autocomplete"
-            pt:pcinputtext:root="custom-inputtext"
-          />
-        </div>
-        <div class="chat-action-btn align-self-center flex"></div>
-      </div>
-      <div class="chat-conversation-box h-full flex-grow overflow-auto">
-        <div class="chat"></div>
-      </div>
-      <div class="chat-footer flex p-3">
-        <vee-field name="cmessage" v-slot="{ handleChange }" :bails="false">
-          <InputText
-            :modelValue="message"
-            @update:modelValue="
-              (val) => {
-                message = val
-                handleChange(val)
-              }
-            "
-            id="cmessage"
-            type="text"
-            :placeholder="`Message`"
-            class="w-full"
-          />
-        </vee-field>
-        <Button
-          type="submit"
-          :disabled="!message || isSubmitted"
-          @click.prevent="onPostMessage()"
-          class="ms-2"
-        >
-          <i v-if="!isSubmitted" class="pi pi-send"></i>
-          <span v-else class="pi pi-spin pi-spinner"></span>
-          <span>Send</span>
-        </Button>
-      </div>
-    </vee-form>
-  </div>
+        <i v-if="!isSubmitted" class="pi pi-send"></i>
+        <span v-else class="pi pi-spin pi-spinner"></span>
+        <span>Send</span>
+      </Button>
+    </div>
+  </vee-form>
 </template>
 
 <script setup>
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import AutoComplete from 'primevue/autocomplete'
-import Toast from 'primevue/toast'
 
 import { postMessageService } from '@/services/message.service'
 import { useWebSocket } from '@/composables/useWebSocket'

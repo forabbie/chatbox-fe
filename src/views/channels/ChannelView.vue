@@ -14,10 +14,10 @@
 import ChannelList from '@/components/channels/ChannelList.vue'
 import ChannelMessages from '@/components/channels/ChannelMessages.vue'
 import ChannelForm from '@/components/channels/ChannelForm.vue'
+
 import { ref } from 'vue'
 
 const channelFormRef = ref(null)
-
 const openNew = async () => {
   if (channelFormRef.value) {
     channelFormRef.value.triggerClick()

@@ -1,5 +1,4 @@
 <template>
-  <Toast pt:root="custom-toast" />
   <Button
     v-show="false"
     icon="pi pi-pen-to-square"
@@ -89,7 +88,6 @@ import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
 import AutoComplete from 'primevue/autocomplete'
 import Chip from 'primevue/chip'
-import Toast from 'primevue/toast'
 import Dialog from 'primevue/dialog'
 
 import { ref } from 'vue'

@@ -1,110 +1,107 @@
 <template>
-  <div class="h-full">
-    <Toast pt:root="custom-toast" />
-    <div class="chat-box-inner flex h-full flex-col">
-      <div
-        class="chat-meta-user chat-active sticky top-0 z-10 flex items-center justify-between border-b border-gray-700 p-3"
-      >
-        <div class="current-chat-user-name flex items-center gap-2">
-          <Avatar
-            icon="pi pi-user"
-            size="small"
-            style="background-color: #f9fce9; color: #1e293b"
-            customClass="bg-red-500 text-white"
-          />
-          <div class="flex flex-col">
-            <span class="text-start text-xl text-white/90">{{ receiver.receiver_name }}</span>
-            <span class="text-xs text-gray-600">{{ receiver.emailaddress }}</span>
-          </div>
+  <div class="chat-box-inner flex h-full flex-col">
+    <div
+      class="chat-meta-user chat-active sticky top-0 z-10 flex items-center justify-between border-b border-gray-700 p-3"
+    >
+      <div class="current-chat-user-name flex items-center gap-2">
+        <Avatar
+          icon="pi pi-user"
+          size="small"
+          style="background-color: #f9fce9; color: #1e293b"
+          customClass="bg-red-500 text-white"
+        />
+        <div class="flex flex-col">
+          <span class="text-start text-xl text-white/90">{{ receiver.receiver_name }}</span>
+          <span class="text-xs text-gray-600">{{ receiver.emailaddress }}</span>
         </div>
       </div>
-      <div class="chat-conversation-box flex-grow overflow-auto">
-        <div class="chat">
-          <div v-for="(message, index) in messages" :key="message.id" class="group-wrapper">
-            <div class="px-2">
-              <Divider
-                v-if="shouldShowDateDivider(index)"
-                align="center"
-                type="solid"
-                pt:root="custom-divider"
-                pt:content="custom-divider-content"
-              >
-                <span class="text-sm">{{ formatDate(message.sent_at) }}</span>
-              </Divider>
-            </div>
-
-            <div
-              class="bubble flex items-center justify-start gap-2 px-3 py-1 hover:bg-gray-800/60"
-              :class="{ 'mt-6': shouldShowAvatar(index) }"
-              @mouseenter="handleMouseEnter(index)"
-              @mouseleave="handleMouseLeave"
+    </div>
+    <div class="chat-conversation-box flex-grow overflow-auto">
+      <div class="chat">
+        <div v-for="(message, index) in messages" :key="message.id" class="group-wrapper">
+          <div class="px-2">
+            <Divider
+              v-if="shouldShowDateDivider(index)"
+              align="center"
+              type="solid"
+              pt:root="custom-divider"
+              pt:content="custom-divider-content"
             >
-              <div class="bubble-avatar flex w-10 items-baseline justify-center">
-                <Avatar
-                  v-if="shouldShowAvatar(index)"
-                  icon="pi pi-user"
-                  size="small"
-                  :label="getInitial(message.sender.username)"
-                  style="background-color: #f9fce9; color: #1e293b"
-                  customClass="bg-red-500 text-white"
-                />
-                <span
-                  v-else
-                  :class="[
-                    'text-[8px] text-slate-400 transition-opacity',
-                    hoveredIndex === index ? 'opacity-100' : 'opacity-0'
-                  ]"
-                >
-                  {{ formatTime(message.sent_at) }}
-                </span>
-              </div>
-
-              <div class="bubble-content">
-                <div v-if="shouldShowAvatar(index)" class="bubble-sender flex items-baseline gap-2">
-                  <div class="username text-sm font-semibold">{{ message.sender.username }}</div>
-                  <div class="time text-xs text-gray-400">
-                    {{ formatTime(message.sent_at) }}
-                  </div>
-                </div>
-
-                <div class="bubble-text text-sm">
-                  <p>{{ message.message }}</p>
-                </div>
-              </div>
-            </div>
+              <span class="text-sm">{{ formatDate(message.sent_at) }}</span>
+            </Divider>
           </div>
-        </div>
-      </div>
-      <div class="chat-footer p-3">
-        <div class="chat-input">
-          <vee-form ref="refmessageform" :validation-schema="schema" class="chat-form flex">
-            <vee-field name="cmessage" v-slot="{ handleChange }" :bails="false">
-              <InputText
-                :modelValue="message"
-                @update:modelValue="
-                  (val) => {
-                    message = val
-                    handleChange(val)
-                  }
-                "
-                id="cmessage"
-                type="text"
-                placeholder="Jot something down"
-                class="w-full"
+
+          <div
+            class="bubble flex items-center justify-start gap-2 px-3 py-1 hover:bg-gray-800/60"
+            :class="{ 'mt-6': shouldShowAvatar(index) }"
+            @mouseenter="handleMouseEnter(index)"
+            @mouseleave="handleMouseLeave"
+          >
+            <div class="bubble-avatar flex w-10 items-baseline justify-center">
+              <Avatar
+                v-if="shouldShowAvatar(index)"
+                icon="pi pi-user"
+                size="small"
+                :label="getInitial(message.sender.username)"
+                style="background-color: #f9fce9; color: #1e293b"
+                customClass="bg-red-500 text-white"
               />
-            </vee-field>
-            <Button
-              type="submit"
-              :disabled="!message || isSubmitted"
-              @click.prevent="onPostMessage()"
-              class="ms-2"
-            >
-              <i v-if="!isSubmitted" class="pi pi-send"></i>
-              <span v-else class="pi pi-spin pi-spinner"></span>
-              <span>Send</span>
-            </Button>
-          </vee-form>
+              <span
+                v-else
+                :class="[
+                  'text-[8px] text-slate-400 transition-opacity',
+                  hoveredIndex === index ? 'opacity-100' : 'opacity-0'
+                ]"
+              >
+                {{ formatTime(message.sent_at) }}
+              </span>
+            </div>
+
+            <div class="bubble-content">
+              <div v-if="shouldShowAvatar(index)" class="bubble-sender flex items-baseline gap-2">
+                <div class="username text-sm font-semibold">{{ message.sender.username }}</div>
+                <div class="time text-xs text-gray-400">
+                  {{ formatTime(message.sent_at) }}
+                </div>
+              </div>
+
+              <div class="bubble-text text-sm">
+                <p>{{ message.message }}</p>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
+    </div>
+    <div class="chat-footer p-3">
+      <div class="chat-input">
+        <vee-form ref="refmessageform" :validation-schema="schema" class="chat-form flex">
+          <vee-field name="cmessage" v-slot="{ handleChange }" :bails="false">
+            <InputText
+              :modelValue="message"
+              @update:modelValue="
+                (val) => {
+                  message = val
+                  handleChange(val)
+                }
+              "
+              id="cmessage"
+              type="text"
+              placeholder="Jot something down"
+              class="w-full"
+            />
+          </vee-field>
+          <Button
+            type="submit"
+            :disabled="!message || isSubmitted"
+            @click.prevent="onPostMessage()"
+            class="ms-2"
+          >
+            <i v-if="!isSubmitted" class="pi pi-send"></i>
+            <span v-else class="pi pi-spin pi-spinner"></span>
+            <span>Send</span>
+          </Button>
+        </vee-form>
       </div>
     </div>
   </div>
@@ -117,7 +114,6 @@ import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import Avatar from 'primevue/avatar'
 import Divider from 'primevue/divider'
-import Toast from 'primevue/toast'
 
 import { useToast } from 'primevue/usetoast'
 import { useWebSocket } from '@/composables/useWebSocket'
