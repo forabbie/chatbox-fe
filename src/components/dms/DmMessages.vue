@@ -146,7 +146,6 @@ onMounted(() => {
       })
     },
     onMessageCallback: (data) => {
-      // console.log('WebSocket Message:', data)
       if (data.id == receiver.value.id || data.id == user.value.id) {
         loadMessages()
       }
