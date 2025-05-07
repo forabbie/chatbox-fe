@@ -115,10 +115,11 @@ const handleFormSubmit = async () => {
 
   try {
     await performLogin(form.value)
-    alert.value.variant = 'bg-green-500'
-    alert.value.msg = 'Success! Your account has been created.'
+    // alert.value.variant = 'bg-green-500'
+    // alert.value.msg = 'Success! Your account has been created.'
     router.push({ name: 'channels' })
   } catch (error) {
+    console.error('Error during login:', error)
     alert.value.variant = 'bg-red-500'
 
     if (error.response.status === 401 || error.response.status === 400) {
@@ -134,7 +135,6 @@ const handleFormSubmit = async () => {
     } else {
       alert.value.msg = 'An unexpected error occurred. Please try again later.'
     }
-    console.error('Error during login:', error)
   } finally {
     isInSubmission.value = false
   }
