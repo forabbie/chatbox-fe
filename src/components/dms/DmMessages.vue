@@ -1,26 +1,51 @@
 <template>
   <div class="chat-box-inner flex h-full flex-col">
     <div
-      class="chat-meta-user chat-active sticky top-0 z-10 flex items-center justify-between border-b border-gray-700 p-3"
+      class="chat-meta-user chat-active sticky top-0 z-10 flex items-center justify-between border-b border-gray-700 p-4"
     >
       <div class="current-chat-user-name flex items-center gap-2">
         <Avatar
           icon="pi pi-user"
           size="small"
           :label="getInitial(receiver.username)"
-          style="background-color: #f9fce9; color: #1e293b"
-          customClass="bg-red-500 text-white"
+          pt:root="custom-avatar"
         />
-        <div class="flex flex-col">
-          <span class="text-md text-start uppercase text-white/90">{{ receiver.username }}</span>
-          <span class="text-xs text-gray-600">{{ receiver.emailaddress }}</span>
-        </div>
+        <span class="text-start uppercase text-white/90"
+          >{{ receiver.username }} {{ receiver.id === user.id ? '(You)' : '' }}
+        </span>
       </div>
     </div>
-    <div class="chat-conversation-box flex-grow overflow-auto">
-      <div class="chat">
+    <div class="chat-conversation-box flex flex-grow flex-col overflow-auto">
+      <div class="chat flex flex-col gap-2 pb-4">
+        <div class="p-4 pb-0">
+          <div class="current-chat-user-name flex items-center gap-2">
+            <Avatar
+              icon="pi pi-user"
+              size="xlarge"
+              :label="getInitial(receiver.username)"
+              style="background-color: #f9fce9; color: #1e293b"
+              customClass="bg-red-500 text-white"
+            />
+            <div class="flex flex-col">
+              <span class="text-start text-xl uppercase text-white/90"
+                >{{ receiver.username }} {{ receiver.id === user.id ? '(You)' : '' }}
+              </span>
+              <span class="text-gray-600">{{ receiver.emailaddress }}</span>
+            </div>
+          </div>
+          <p v-if="receiver.id === user.id" class="mt-4 text-sm">
+            This is your space. Draft messages, list your to-dos, or keep links and files handy. You
+            can also talk to yourself here, but please bear in mind you’ll have to supply both sides
+            of the conversation.
+          </p>
+          <p v-else class="mt-4 text-sm">
+            This conversation is just between
+            <span class="font-bold">@{{ receiver.username }}</span> and you. Check out their profile
+            to learn more about them.
+          </p>
+        </div>
         <div v-for="(message, index) in messages" :key="message.id" class="group-wrapper">
-          <div class="px-2">
+          <div>
             <Divider
               v-if="shouldShowDateDivider(index)"
               align="center"
@@ -120,6 +145,7 @@ import { useToast } from 'primevue/usetoast'
 import { useWebSocket } from '@/composables/useWebSocket'
 import { useUserStore } from '@/stores/user.store'
 import { useMessageStore } from '@/stores/message.store'
+import { useDmStore } from '@/stores/dm.store'
 
 import { getInitial } from '@/utils/helper'
 import { formatDate, formatTime } from '@/utils/date'
@@ -130,6 +156,7 @@ const toast = useToast()
 
 const userStore = useUserStore()
 const messageStore = useMessageStore()
+const dmStore = useDmStore()
 
 const { postMessage } = ChannelFunctions()
 const { initWebSocket, sendMessage, closeWebSocket } = useWebSocket()
@@ -146,9 +173,10 @@ onMounted(() => {
         life: 3000
       })
     },
-    onMessageCallback: (data) => {
+    onMessageCallback: async (data) => {
       if (data.id == receiver.value.id || data.id == user.value.id) {
-        loadMessages()
+        await loadMessages()
+        await dmStore.setDms()
       }
     }
   })
@@ -315,5 +343,12 @@ function handleMouseLeave() {
 .p-divider-content.custom-divider-content {
   --p-divider-content-background: #0f172a;
   color: #4b5563;
+}
+.p-avatar.custom-avatar {
+  @apply bg-indigo-900;
+  --p-avatar-width: 1.8rem;
+  --p-avatar-height: 1.8rem;
+  --p-avatar-font-size: 0.8rem;
+  --p-avatar-color: white;
 }
 </style>

@@ -33,7 +33,7 @@
                   class="line-clamp-1 break-all text-sm font-bold text-white"
                   :title="dm.receiver_name"
                 >
-                  {{ dm.username }}
+                  {{ dm.username }} {{ dm.conversation_with_id === user.id ? '(You)' : '' }}
                 </span>
                 <span class="line-clamp-2 break-words text-xs text-gray-400" :title="dm.message">
                   {{ dm.message }}
@@ -72,6 +72,10 @@ const dms = computed(() => {
   return dmStore.dms
 })
 
+const user = computed(() => {
+  return userStore.user
+})
+
 const users = computed(() => {
   return userStore.users
 })
@@ -92,6 +96,7 @@ const enrichedDms = computed(() => {
     const receiver = userMap.value[receiverId]
     return {
       ...dm,
+      conversation_with_id: receiverId,
       username: receiver?.username,
       receiver_email: receiver?.emailaddress || 'Unknown',
       receiver_name:

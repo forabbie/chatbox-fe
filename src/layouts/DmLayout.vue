@@ -54,8 +54,8 @@ const loadDmDetails = async (dmId) => {
   const dm = dms.find((c) => String(c.id) === String(dmId))
   const userId = parseUserIdFromToken()
   let receiverId = dm?.receiver_id
-  if (userId === dm.receiver_id) {
-    receiverId = dm.sender_id
+  if (userId === dm?.receiver_id) {
+    receiverId = dm?.sender_id
   }
 
   const messagesquery = {
