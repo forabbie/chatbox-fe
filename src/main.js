@@ -12,6 +12,7 @@ import Lara from '@primevue/themes/lara'
 import { definePreset } from '@primevue/themes'
 
 import VeeValidatePlugin from './plugins/validation'
+import ConfirmationService from 'primevue/confirmationservice'
 import ToastService from 'primevue/toastservice'
 import Tooltip from 'primevue/tooltip'
 
@@ -97,6 +98,7 @@ app.use(PrimeVue, {
 })
 app.use(VeeValidatePlugin)
 app.use(ToastService)
+app.use(ConfirmationService)
 app.directive('tooltip', Tooltip)
 
 app.mount('#app')

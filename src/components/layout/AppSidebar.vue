@@ -43,13 +43,30 @@
           icon="pi pi-sign-out"
           aria-label="Create Channel"
           pt:root="custom-btn"
-          @click.prevent="logout"
+          @click.prevent="requireConfirmation()"
           title="logout"
         />
       </div>
     </div>
     <!-- Vertical Divider -->
     <!-- <BaseDivider layout="vertical" /> -->
+    <ConfirmDialog group="headless">
+      <template #container="{ message, acceptCallback, rejectCallback }">
+        <div class="bg-surface-0 dark:bg-surface-900 flex flex-col items-center rounded p-8">
+          <div
+            class="-mt-20 inline-flex h-24 w-24 items-center justify-center rounded-full bg-primary text-slate-50"
+          >
+            <i class="pi pi-question !text-4xl"></i>
+          </div>
+          <span class="mb-2 mt-6 block text-2xl font-bold">{{ message.header }}</span>
+          <p class="mb-0">{{ message.message }}</p>
+          <div class="mt-6 flex items-center gap-2">
+            <Button label="Confirm" @click="acceptCallback" class="w-32"></Button>
+            <Button label="Cancel" outlined @click="rejectCallback" class="w-32"></Button>
+          </div>
+        </div>
+      </template>
+    </ConfirmDialog>
   </aside>
 </template>
 
@@ -58,11 +75,13 @@ import Button from 'primevue/button'
 import IconHome from '@/components/icons/IconHome.vue'
 import IconMessage from '@/components/icons/IconMessage.vue'
 import Avatar from 'primevue/avatar'
+import ConfirmDialog from 'primevue/confirmdialog'
 
 import router from '@/router'
 
 import { computed, markRaw } from 'vue'
 import { useRoute } from 'vue-router'
+import { useConfirm } from 'primevue/useconfirm'
 
 import { getInitial } from '@/utils/helper'
 
@@ -111,6 +130,21 @@ const isRouteActive = (item) => {
 const logout = async () => {
   await authStore.logoutUser()
   router.push('/auth/login')
+}
+
+const confirm = useConfirm()
+const requireConfirmation = () => {
+  confirm.require({
+    group: 'headless',
+    header: 'Sign out now?',
+    message: 'Please confirm if you want to log out of your account.',
+    accept: () => {
+      logout()
+    },
+    reject: () => {
+      // toast.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected', life: 3000 })
+    }
+  })
 }
 </script>
 
