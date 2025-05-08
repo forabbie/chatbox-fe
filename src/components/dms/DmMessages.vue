@@ -8,6 +8,7 @@
           icon="pi pi-user"
           size="small"
           :label="getInitial(receiver.username)"
+          :style="receiver.id === user.id ? { backgroundColor: '#f9fce9', color: '#1e293b' } : {}"
           pt:root="custom-avatar"
         />
         <span class="text-start uppercase text-white/90"
@@ -23,8 +24,10 @@
               icon="pi pi-user"
               size="xlarge"
               :label="getInitial(receiver.username)"
-              style="background-color: #f9fce9; color: #1e293b"
-              customClass="bg-red-500 text-white"
+              :style="
+                receiver.id === user.id ? { backgroundColor: '#f9fce9', color: '#1e293b' } : {}
+              "
+              pt:root="custom-avatar"
             />
             <div class="flex flex-col">
               <span class="text-start text-xl uppercase text-white/90"
@@ -69,9 +72,15 @@
                 icon="pi pi-user"
                 size="small"
                 :label="getInitial(message.sender.username)"
-                style="background-color: #f9fce9; color: #1e293b"
-                customClass="bg-red-500 text-white"
+                :style="
+                  message.sender.id === user.id
+                    ? { backgroundColor: '#f9fce9', color: '#1e293b' }
+                    : {}
+                "
+                pt:root="custom-avatar"
+                :aria-label="`Avatar of ${message.sender.username}`"
               />
+
               <span
                 v-else
                 :class="[
@@ -334,6 +343,13 @@ function handleMouseLeave() {
   background-color: transparent;
   border: 1px solid transparent;
 }
+.p-avatar.custom-avatar {
+  /* @apply bg-indigo-700; */
+  /* --p-avatar-width: 1.8rem;
+  --p-avatar-height: 1.8rem;
+  --p-avatar-font-size: 0.8rem;
+  --p-avatar-color: white; */
+}
 </style>
 
 <style>
@@ -343,12 +359,5 @@ function handleMouseLeave() {
 .p-divider-content.custom-divider-content {
   --p-divider-content-background: #0f172a;
   color: #4b5563;
-}
-.p-avatar.custom-avatar {
-  @apply bg-indigo-900;
-  --p-avatar-width: 1.8rem;
-  --p-avatar-height: 1.8rem;
-  --p-avatar-font-size: 0.8rem;
-  --p-avatar-color: white;
 }
 </style>

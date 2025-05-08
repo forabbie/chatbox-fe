@@ -37,8 +37,7 @@
           icon="pi pi-user"
           size="small"
           :label="getInitial(user.username)"
-          style="background-color: #f9fce9; color: #1e293b"
-          customClass="bg-red-500 text-white"
+          pt:root="custom-avatar"
         />
         <Button
           icon="pi pi-sign-out"
@@ -158,5 +157,10 @@ i {
   padding: 0;
   background-color: transparent;
   border: 1px solid transparent;
+}
+.p-avatar.custom-avatar {
+  @apply bg-indigo-700;
+  /* --p-avatar-background: #15803d; */
+  --p-avatar-color: white;
 }
 </style>
