@@ -13,6 +13,7 @@ import { definePreset } from '@primevue/themes'
 
 import VeeValidatePlugin from './plugins/validation'
 import ToastService from 'primevue/toastservice'
+import Tooltip from 'primevue/tooltip'
 
 const app = createApp(App)
 
@@ -96,5 +97,6 @@ app.use(PrimeVue, {
 })
 app.use(VeeValidatePlugin)
 app.use(ToastService)
+app.directive('tooltip', Tooltip)
 
 app.mount('#app')

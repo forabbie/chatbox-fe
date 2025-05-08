@@ -7,11 +7,12 @@
         <Avatar
           icon="pi pi-user"
           size="small"
+          :label="getInitial(receiver.username)"
           style="background-color: #f9fce9; color: #1e293b"
           customClass="bg-red-500 text-white"
         />
         <div class="flex flex-col">
-          <span class="text-start text-xl text-white/90">{{ receiver.receiver_name }}</span>
+          <span class="text-md text-start uppercase text-white/90">{{ receiver.username }}</span>
           <span class="text-xs text-gray-600">{{ receiver.emailaddress }}</span>
         </div>
       </div>

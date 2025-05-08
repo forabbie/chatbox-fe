@@ -33,6 +33,7 @@
       </div>
       <div class="mb-4 flex flex-col items-center gap-4 p-2.5">
         <Avatar
+          :title="`${user.username}`"
           icon="pi pi-user"
           size="small"
           :label="getInitial(user.username)"
@@ -44,6 +45,7 @@
           aria-label="Create Channel"
           pt:root="custom-btn"
           @click.prevent="logout"
+          title="logout"
         />
       </div>
     </div>

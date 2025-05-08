@@ -22,7 +22,7 @@
             <div class="flex">
               <div class="relative mr-2">
                 <Avatar
-                  :label="getInitial(dm.receiver_name)"
+                  :label="getInitial(dm.username)"
                   icon="pi pi-user"
                   class="size-10"
                   style="background-color: #f9fce9; color: #1e293b"
@@ -33,7 +33,7 @@
                   class="line-clamp-1 break-all text-sm font-bold text-white"
                   :title="dm.receiver_name"
                 >
-                  {{ dm.receiver_name }}
+                  {{ dm.username }}
                 </span>
                 <span class="line-clamp-2 break-words text-xs text-gray-400" :title="dm.message">
                   {{ dm.message }}
@@ -92,6 +92,7 @@ const enrichedDms = computed(() => {
     const receiver = userMap.value[receiverId]
     return {
       ...dm,
+      username: receiver?.username,
       receiver_email: receiver?.emailaddress || 'Unknown',
       receiver_name:
         receiver?.firstname && receiver?.lastname

@@ -25,10 +25,20 @@
           @complete="search"
           optionLabel="emailaddress"
           optionValue="id"
-          placeholder="@somebody"
+          placeholder="email@somebody.com"
           pt:root="custom-autocomplete"
           pt:pcinputtext:root="custom-inputtext"
-        />
+        >
+          <template #option="slotProps">
+            <div class="flex items-center gap-2">
+              <Avatar icon="pi pi-user" size="small" customClass="bg-red-500 text-white" />
+              <div class="text-sm">
+                <span class="uppercase">{{ slotProps.option.username }}</span>
+                <p class="text-xs text-gray-500">{{ slotProps.option.emailaddress }}</p>
+              </div>
+            </div>
+          </template>
+        </AutoComplete>
       </div>
       <div class="chat-action-btn align-self-center flex"></div>
     </div>
@@ -69,6 +79,7 @@
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import AutoComplete from 'primevue/autocomplete'
+import Avatar from 'primevue/avatar'
 
 import { postMessageService } from '@/services/message.service'
 import { useWebSocket } from '@/composables/useWebSocket'
