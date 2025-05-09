@@ -92,18 +92,19 @@ import Dialog from 'primevue/dialog'
 
 import { ref } from 'vue'
 import { useToast } from 'primevue/usetoast'
+import { useWebSocket } from '@/composables/useWebSocket'
+import { useRouter } from 'vue-router'
+import { useChannelStore } from '@/stores/channel.store'
 
 import UserFunctions from '@/components/users/user'
 import ChannelFunctions from '@/components/channels/channel'
-
-import { useRouter } from 'vue-router'
-import { useChannelStore } from '@/stores/channel.store'
 
 const router = useRouter()
 const channelStore = useChannelStore()
 
 const { listUsers } = UserFunctions()
 const { postChannel } = ChannelFunctions()
+const { sendMessage } = useWebSocket()
 
 const toast = useToast()
 
@@ -171,6 +172,8 @@ const saveChannel = async () => {
       })
     } else {
       await createChannel(channelData)
+      const msg = { class: 'channel', id: 0 }
+      sendMessage(msg)
     }
     await channelStore.setChannels()
     router.push({ name: 'channels' })

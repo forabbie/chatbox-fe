@@ -33,12 +33,14 @@ const routes = [
       {
         path: ':id',
         name: 'channel',
-        component: () => import('@/views/channels/ChannelView.vue')
+        component: () => import('@/views/channels/ChannelView.vue'),
+        props: true
       },
       {
         path: 'no-channels',
         name: 'no-channels',
-        component: () => import('@/views/channels/NoChannelsView.vue')
+        component: () => import('@/views/channels/NoChannelsView.vue'),
+        props: true
       }
     ]
   },

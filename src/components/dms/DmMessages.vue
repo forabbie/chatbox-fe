@@ -172,7 +172,7 @@ const { initWebSocket, sendMessage, closeWebSocket } = useWebSocket()
 
 onMounted(() => {
   initWebSocket({
-    baseWsUrl: import.meta.env.VITE_WBS_BASE_URL + `/chat/${receiver.value.id}`,
+    baseWsUrl: `${import.meta.env.VITE_WBS_BASE_URL}/chat/${receiver.value.id}`,
     onErrorCallback: (error) => {
       console.error('WebSocket Error:', error)
       toast.add({

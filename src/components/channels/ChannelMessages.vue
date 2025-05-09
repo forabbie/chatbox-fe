@@ -44,6 +44,13 @@
     </div>
     <div class="chat-conversation-box flex-grow overflow-auto">
       <div class="chat">
+        <div class="flex flex-col gap-4 p-4 pb-0">
+          <Avatar icon="pi pi-hashtag" size="xlarge" shape="circle" pt:root="custom-avatar" />
+          <h3 class="text-start text-6xl text-white/90">Welcome to #{{ channel.name }}</h3>
+          <p class="text-sm">
+            This is the start of the <strong>#{{ channel.name }}</strong> channel.
+          </p>
+        </div>
         <div v-for="(res, index) in messages" :key="res.id" class="group-wrapper">
           <div class="px-2">
             <Divider
@@ -223,7 +230,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted, onUnmounted } from 'vue'
 
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
@@ -253,7 +260,53 @@ const messageStore = useMessageStore()
 
 const { listUsers } = UserFunctions()
 const { postMessage, postChannelMember } = ChannelFunctions()
-const { sendMessage } = useWebSocket()
+const { sendMessage, initWebSocket, closeWebSocket } = useWebSocket()
+
+onMounted(() => {
+  setWebSocket()
+})
+
+onUnmounted(() => {
+  closeWebSocket()
+})
+
+const setWebSocket = async () => {
+  initWebSocket({
+    baseWsUrl: import.meta.env.VITE_WBS_BASE_URL + `/chat/${0}`,
+    onErrorCallback: (error) => {
+      console.error('WebSocket Error:', error)
+      toast.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'WebSocket connection error.',
+        life: 3000
+      })
+    },
+    onMessageCallback: async (data) => {
+      if (data.id == 0) {
+        await loadMessages()
+        await channelStore.setChannels()
+        await channelStore.setChannelDetails(channel.value.id)
+      }
+    }
+  })
+}
+
+const loadMessages = async () => {
+  const messagesquery = {
+    receiver_id: channel.value.id,
+    receiver_class: 'channel',
+    sort: 'sent_at,asc',
+    page: 1,
+    limit: 50
+  }
+
+  try {
+    await messageStore.setMessages(messagesquery)
+  } catch (error) {
+    console.error('Error loading messages:', error)
+  }
+}
 
 const channel = computed(() => {
   return channelStore.channel
@@ -308,7 +361,7 @@ const onPostMessage = async () => {
 
   try {
     await postMessage(request)
-    const msg = { class: 'channel', id: channel.value.id }
+    const msg = { class: 'channel', id: 0 }
     sendMessage(msg)
 
     message.value = ''
